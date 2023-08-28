@@ -17,7 +17,12 @@ app.use(express.static('public'));
 
 app.use(
     cors({
-        origin: ['http://localhost:3006', 'https://deploy-firebase-fe.vercel.app', 'https://cuongcodedao.id.vn', /myfirebase\.com$/, /cakes\.com$/],
+        origin: [
+            'https://deploy-firebase-fe.vercel.app/',
+            /https:\/\/deploy-firebase-fe\.vercel\.app$/,
+            'https://deploy-firebase-fe.vercel.app',
+            'https://cuongcodedao.id.vn',
+        ],
         credentials: true,
     }),
 );
