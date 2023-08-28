@@ -12,8 +12,6 @@ const route_product_1 = __importDefault(require("./src/routes/route.product"));
 const route_account_1 = __importDefault(require("./src/routes/route.account"));
 const route_cart_1 = __importDefault(require("./src/routes/route.cart"));
 const route_order_1 = __importDefault(require("./src/routes/route.order"));
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use((0, helmet_1.default)());
@@ -24,7 +22,6 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/', route_account_1.default);
 app.use('/', route_product_1.default);
 app.use('/', route_cart_1.default);

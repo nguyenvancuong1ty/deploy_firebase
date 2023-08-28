@@ -9,8 +9,6 @@ import accountRouter from './src/routes/route.account';
 import cartRouter from './src/routes/route.cart';
 import orderRouter from './src/routes/route.order';
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const app = express();
 const port = process.env.PORT;
 
@@ -27,7 +25,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/', accountRouter);
 app.use('/', productRouter);
 app.use('/', cartRouter);
