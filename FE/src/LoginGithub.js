@@ -1,7 +1,7 @@
 import { signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { GithubAuthProvider } from 'firebase/auth';
 
 const provider = new GithubAuthProvider();
@@ -30,7 +30,7 @@ const LoginGithub = ({ setShow, setUid }) => {
 
     return (
         <div style={{ cursor: 'pointer' }}>
-            <FontAwesomeIcon icon={faTwitter} style={{ color: '#38bc6b' }} size="2xl" onClick={handleLoginWithGithub} />
+            <FontAwesomeIcon icon={faGithub} style={{ color: '#38bc6b' }} size="2xl" onClick={handleLoginWithGithub} />
         </div>
     );
 };
