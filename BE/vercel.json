@@ -7,12 +7,7 @@
             "config": { "includeFiles": ["src/dist/**"] }
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "src/dist/server.js"
-        }
-    ],
+
     "headers": [
         {
             "source": "/(.*)",
