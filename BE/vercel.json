@@ -10,7 +10,8 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "src/dist/server.js"
+            "dest": "src/dist/server.js",
+            "headers": { "Access-Control-Allow-Origin": "*" }
         }
     ]
 }
