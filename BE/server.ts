@@ -17,7 +17,7 @@ app.use(express.static('public'));
 
 app.use(
     cors({
-        origin: ['https://deploy-firebase-fe.vercel.app'],
+        origin: ['https://deploy-firebase-fe.vercel.app', 'http://localhost:3006'],
         credentials: true,
     }),
 );

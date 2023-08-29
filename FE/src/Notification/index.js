@@ -15,13 +15,13 @@ function NotificationComponent() {
                 const currentToken = await getToken(messaging, {
                     vapidKey: 'BMHxPXJyw10y2qfn3W7IljBQE7u1YW7ORLeAubHV3_lJUPiOQBGhndWSv4ZbSXHkIUIzAhyN1AaKmst_naCqNZ8',
                 });
+                console.log('Bật Thông báo');
                 setToken(currentToken);
             } catch (error) {
                 console.log('Error:------------------', error);
             }
         };
 
-        // Xử lý Push Notification khi nhận được
         const handlePushNotification = () => {
             onMessage(messaging, (payload) => {
                 setNotify(payload);
@@ -47,7 +47,6 @@ function NotificationComponent() {
                 } else if (change.type === 'removed') {
                 } else if (change.type === 'modified') {
                     const newOrder = change.doc.data();
-                    console.log(newOrder);
                     newOrder.id_user_shipper &&
                         newOrder.status === 'shipping' &&
                         axios({
