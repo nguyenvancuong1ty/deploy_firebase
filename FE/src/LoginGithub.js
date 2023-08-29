@@ -1,7 +1,7 @@
 import { signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { GithubAuthProvider } from 'firebase/auth';
 
 const provider = new GithubAuthProvider();

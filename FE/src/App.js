@@ -9,7 +9,6 @@ import LoginCpn from './LoginCpn';
 import NotificationComponent from './Notification';
 import Shop from './Shop';
 import Detail from './Detail';
-import Message from './component/Facebook.Message';
 function App() {
     const [show, setShow] = useState(false);
     const [showCart, setShowCart] = useState(false);
@@ -26,7 +25,6 @@ function App() {
                     <Route path="/shop" element={<Shop></Shop>} />
                     <Route path="/detail/:id" element={<Detail></Detail>} />
                 </Routes>
-                <Message></Message>
             </div>
             {show && <LoginCpn setShow={setShow} setUid={setUid} />}
         </Router>

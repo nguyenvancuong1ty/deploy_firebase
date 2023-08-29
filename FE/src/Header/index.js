@@ -14,7 +14,6 @@ function Header(props) {
     const dispatch = useDispatch();
     const number = useSelector((state) => state.numberReducer.number);
     const dataCart = useSelector((state) => state.dataCartReducer.dataCart);
-    const [showOption, setShowOption] = useState(false);
     const uid = localStorage.getItem('uid');
     const [active, setActive] = useState(1);
     let number_product =
