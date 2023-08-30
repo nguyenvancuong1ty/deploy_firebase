@@ -13,11 +13,7 @@
             "dest": "src/dist/server.js",
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "headers": {
-                "Access-Control-Allow-Origin": [
-                    "https://deploy-firebase-fe.vercel.app",
-                    "https://incandescent-granita-f4f8a7.netlify.app",
-                    "https://cuongcodedao.id.vn"
-                ]
+                "Access-Control-Allow-Origin": "https://deploy-firebase-fe.vercel.app https://incandescent-granita-f4f8a7.netlify.app https://cuongcodedao.id.vn"
             }
         }
     ]
