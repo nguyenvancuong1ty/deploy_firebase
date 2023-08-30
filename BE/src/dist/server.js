@@ -20,7 +20,7 @@ app.use((0, helmet_1.default)());
 app.use(express_1.default.static('public'));
 app.use(
     (0, cors_1.default)({
-        origin: ['https://deploy-firebase-fe.vercel.app', 'https://incandescent-granita-f4f8a7.netlify.app'],
+        origin: ['https://deploy-firebase-fe.vercel.app', 'https://incandescent-granita-f4f8a7.netlify.app', 'https://cuongcodedao.id.vn'],
         credentials: true,
     }),
 );
