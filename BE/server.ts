@@ -17,7 +17,7 @@ app.use(express.static('public'));
 
 app.use(
     cors({
-        origin: ['https://deploy-firebase-fe.vercel.app', 'https://creative-pie-c9f6c4.netlify.app'],
+        origin: ['https://deploy-firebase-fe.vercel.app', 'https://incandescent-granita-f4f8a7.netlify.app'],
         credentials: true,
     }),
 );
