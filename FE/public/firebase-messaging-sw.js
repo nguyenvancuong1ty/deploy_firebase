@@ -26,7 +26,7 @@ messaging.onBackgroundMessage(function (payload) {
         body: payload.notification.body,
         icon: '%PUBLIC_URL%/logo@.jpg',
     };
-
+    console.log('background');
     // eslint disable next line no restricted globals
-    // self.registration.showNotification(notificationTitle, notificationOptions);
+    self.registration.showNotification(notificationTitle, notificationOptions);
 });
