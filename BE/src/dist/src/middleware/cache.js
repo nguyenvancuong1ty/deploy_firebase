@@ -12,7 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveDataToCache = exports.client = exports.cache = void 0;
 const { createClient } = require('redis');
 const response_success_1 = require("../utils/response.success");
-const client = createClient();
+const client = createClient({
+    password: 'F1ZhPJA8Vdjfm3ExJwKhAPIzRPLkGVQf',
+    socket: {
+        host: 'redis-17768.c299.asia-northeast1-1.gce.cloud.redislabs.com',
+        port: 17768,
+    },
+});
 exports.client = client;
 const cache = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

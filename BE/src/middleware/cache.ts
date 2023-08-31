@@ -4,7 +4,13 @@ const { createClient } = require('redis');
 import Product from '../models/model.product';
 import { OK } from '../utils/response.success';
 
-const client = createClient();
+const client = createClient({
+    password: 'F1ZhPJA8Vdjfm3ExJwKhAPIzRPLkGVQf',
+    socket: {
+        host: 'redis-17768.c299.asia-northeast1-1.gce.cloud.redislabs.com',
+        port: 17768,
+    },
+});
 
 const cache = async (req: Request, res: Response, next: NextFunction) => {
     try {

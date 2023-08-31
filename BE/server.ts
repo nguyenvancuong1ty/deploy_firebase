@@ -17,7 +17,7 @@ app.use(express.static('public'));
 
 app.use(
     cors({
-        origin: ['https://deploy-firebase-fe.vercel.app', 'https://incandescent-granita-f4f8a7.netlify.app','https://cuongcodedao.id.vn'],
+        origin: ['https://deploy-firebase-fe.vercel.app', 'https://incandescent-granita-f4f8a7.netlify.app', 'https://cuongcodedao.id.vn'],
         credentials: true,
     }),
 );

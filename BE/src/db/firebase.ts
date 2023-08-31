@@ -30,4 +30,5 @@ admin.initializeApp({
 
 const db = getFirestore();
 const messaging = admin.messaging();
+
 export { db, Timestamp, messaging };

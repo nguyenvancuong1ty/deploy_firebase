@@ -9,6 +9,14 @@ function NotificationComponent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [notify, setNotify] = useState(null);
     const [token, setToken] = useState('');
+    const handlePushNotification = () => {
+        console.log('Sẵn sàng nhận thông báo');
+        onMessage(messaging, (payload) => {
+            setNotify(payload);
+            console.log(payload);
+            setIsModalOpen(true);
+        });
+    };
     useEffect(() => {
         const registerNotification = async () => {
             try {
@@ -16,23 +24,18 @@ function NotificationComponent() {
                     vapidKey: 'BMHxPXJyw10y2qfn3W7IljBQE7u1YW7ORLeAubHV3_lJUPiOQBGhndWSv4ZbSXHkIUIzAhyN1AaKmst_naCqNZ8',
                 });
                 setToken(currentToken);
+                console.log('Chấp nhận nhận thông báo', currentToken);
+                handlePushNotification();
             } catch (error) {
                 console.log('Error:------------------', error);
             }
         };
 
         // Xử lý Push Notification khi nhận được
-        const handlePushNotification = () => {
-            onMessage(messaging, (payload) => {
-                setNotify(payload);
-                console.log(payload);
-                setIsModalOpen(true);
-            });
-        };
 
         registerNotification();
-        handlePushNotification();
     }, []);
+
     useEffect(() => {
         const ordersRef = collection(db, 'order');
         const queryRef = query(

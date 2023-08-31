@@ -24,9 +24,7 @@ messaging.onBackgroundMessage(function (payload) {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        // data: {
-        //     link: 'https://www.facebook.com/nguyenvancuong13102001/',
-        // },
+        icon: '%PUBLIC_URL%/logo@.jpg',
     };
 
     // eslint disable next line no restricted globals
