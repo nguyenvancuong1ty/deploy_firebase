@@ -5,6 +5,11 @@ import OrderService from '../service/service.order';
 import { Conflict } from '../utils/response.error';
 
 class OrderController {
+    async getAllOrder(req: Request, res: Response): Promise<Response> {
+        const data: Array<any> = await OrderService.getAllOrder(req, res);
+        return new OK(data).send(res);
+    }
+
     async getOrder(req: Request, res: Response): Promise<Response> {
         const data: Array<any> = await OrderService.getOrder(req, res);
         saveDataToCache(req, data);

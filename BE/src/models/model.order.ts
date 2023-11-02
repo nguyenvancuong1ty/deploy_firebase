@@ -1,5 +1,3 @@
-import Product from './model.product';
-
 interface Order {
     deleted: boolean;
     detail: object;

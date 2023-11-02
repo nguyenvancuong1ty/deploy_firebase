@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import AccountService from '../service/service.account';
 import { CREATED, OK } from '../utils/response.success';
-import { Conflict, UnAuthorized } from '../utils/response.error';
-
+import { Conflict, INTERNAL_SERVER_ERROR, UnAuthorized } from '../utils/response.error';
+import { Timestamp, db, messaging } from '../db/firebase';
 class AccountController {
     async login(req: Request, res: Response): Promise<any> {
         const data = await AccountService.login(req, res);
@@ -15,6 +15,13 @@ class AccountController {
     async handleLoginWithGoogle(req: Request, res: Response): Promise<any> {
         const data = await AccountService.handleLoginWithGoogle(req, res);
         return new OK(data).send(res);
+    }
+    async getAllAccount(req: Request, res: Response): Promise<void | Response> {
+        const data = await AccountService.getAllAccount(req, res);
+        if (data) {
+            return new CREATED(data).send(res);
+        }
+        return;
     }
 
     async create(req: Request, res: Response): Promise<void | Response> {
@@ -33,10 +40,13 @@ class AccountController {
             return new Conflict('Incorrect password').send(res);
         }
     }
+    async update(req: Request, res: Response): Promise<any> {
+        const data = await AccountService.update(req, res);
 
+        return new OK(data, 'update success').send(res);
+    }
     async confirmCode(req: Request, res: Response): Promise<any> {
         const data = await AccountService.confirmCode(req, res);
-        console.log('DATA', data);
 
         if (data) {
             return new OK(data, 'get code success, pleas check you email').send(res);
@@ -52,6 +62,62 @@ class AccountController {
         } else {
             return new Conflict('Incorrect code').send(res);
         }
+    }
+
+    async registerNotify(req: Request, res: Response) {
+        const newToken: string = req.body.token;
+        await messaging
+            .subscribeToTopic(newToken, process.env.TOPIC)
+            .then(() => {
+                console.log('Successfully subscribed to topic:', process.env.TOPIC);
+            })
+            .catch((e: Error) => {
+                console.log('Error subscribing to topic:', e);
+            });
+
+        return new OK().send(res);
+    }
+    async unsubscribeFromTopic(req: Request, res: Response) {
+        const listTopic: string[] = [];
+        await messaging
+            .unsubscribeFromTopic(listTopic, process.env.TOPIC)
+            .then(() => {
+                console.log('Successfully subscribed to topi:', process.env.TOPIC);
+            })
+            .catch((e: Error) => {
+                console.log('Error subscribing to topic:', e);
+            });
+
+        return new OK().send(res);
+    }
+    async notifyAll(req: Request, res: Response): Promise<any> {
+        const message = {
+            data: {
+                title: 'Thông báo tổng',
+                body: 'Thông báo đến tất cả thành viên',
+            },
+            topic: process.env.TOPIC,
+        };
+        const messageSend = await messaging.send(message);
+        const notifyQuery = db.collection('notify');
+        const querySnapshot = await notifyQuery.add({
+            deleted: false,
+            description: 'Thông báo đến tất cả thành viên',
+            icon: 'www',
+            isAll: true,
+            isRead: false,
+            link: 'string',
+            time: Timestamp.fromDate(new Date()),
+            title: 'Thông báo tổng',
+            user_id: [],
+        });
+        await Promise.all([messageSend, querySnapshot])
+            .then(() => {
+                return new OK([], 'send notify success').send(res);
+            })
+            .catch(() => {
+                return false;
+            });
     }
 }
 

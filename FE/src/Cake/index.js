@@ -1,81 +1,89 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './Cake.css';
-import { faBagShopping } from '@fortawesome/free-solid-svg-icons';
-import { Tooltip } from 'antd';
-import { Modal, message } from 'antd';
-import { useDispatch } from 'react-redux';
-import { increment } from '~/redux';
-import api from '~/config/axios';
 import { Link } from 'react-router-dom';
-const { confirm } = Modal;
+// import { Modal, message } from 'antd';
+import './Cake.css';
+// import { useDispatch } from 'react-redux';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faBagShopping } from '@fortawesome/free-solid-svg-icons';
+// import { Tooltip } from 'antd';
+// import { increment } from '~/redux';
+// import api from '~/config/axios';
+// const { confirm } = Modal;
 function Cake({ item, setShow }) {
-    const [messageApi2, contextHolder2] = message.useMessage();
-    const dispatch = useDispatch();
-    const addToCartSuccess = () => {
-        messageApi2.open({
-            style: { marginTop: 120 },
-            type: 'success',
-            content: 'Thêm thành công!',
-        });
-    };
-    const handleAddToCart = async (ID) => {
-        try {
-            const res = await api.post(
-                '/cart',
-                {
-                    uid: localStorage.getItem('uid'),
-                    cakeID: ID,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                },
-            );
+    // const [messageApi2, contextHolder2] = message.useMessage();
+    // const dispatch = useDispatch();
+    // const addToCartSuccess = () => {
+    //     messageApi2.open({
+    //         style: { marginTop: 120 },
+    //         type: 'success',
+    //         content: 'Thêm thành công!',
+    //     });
+    // };
+    // // const handleAddToCart = async (ID) => {
+    // //     try {
+    // //         const res = await api.post(
+    // //             '/cart',
+    // //             {
+    // //                 uid: localStorage.getItem('uid'),
+    // //                 cakeID: ID,
+    // //             },
+    // //             {
+    // //                 headers: {
+    // //                     Authorization: `Bearer ${localStorage.getItem('token')}`,
+    // //                 },
+    // //             },
+    // //         );
 
-            if (res.data.status !== 409) {
-                dispatch(increment());
-                addToCartSuccess();
-            }
-        } catch (error) {
-            if (error.response.status === 409) {
-                addToCartSuccess();
-            } else alert(error.status);
-        }
-    };
+    // //         if (res.data.status !== 409) {
+    // //             dispatch(increment());
+    // //             addToCartSuccess();
+    // //         }
+    // //     } catch (error) {
+    // //         if (error.response.status === 409) {
+    // //             addToCartSuccess();
+    // //         } else alert(error.status);
+    // //     }
+    // // };
 
-    const showConfirm = (cakeID) => {
-        confirm({
-            style: { marginTop: 150 },
-            zIndex: 9999,
-            title: 'Mua hàng',
-            content: 'Thêm mặt hàng này vào giỏ hàng của bạn?',
-            onOk() {
-                handleAddToCart(cakeID);
-            },
-            onCancel() {
-                console.log('Cancel');
-            },
-        });
-    };
-    const handleAddCart = (e, cakeID) => {
-        e.preventDefault()
-        localStorage.getItem('uid') ? showConfirm(cakeID) : setShow(true);
-    };
+    // // const showConfirm = (cakeID) => {
+    // //     confirm({
+    // //         style: { marginTop: 150 },
+    // //         zIndex: 9999,
+    // //         title: 'Mua hàng',
+    // //         content: 'Thêm mặt hàng này vào giỏ hàng của bạn?',
+    // //         onOk() {
+    // //             handleAddToCart(cakeID);
+    // //         },
+    // //         onCancel() {
+    // //             console.log('Cancel');
+    // //         },
+    // //     });
+    // // };
+    // // const handleAddCart = (e, cakeID) => {
+    // //     e.preventDefault();
+    // //     localStorage.getItem('uid') ? showConfirm(cakeID) : setShow(true);
+    // // };
+
     return (
         <>
             <Link to={`/detail/${item.Id}`} className="product__content--item">
-                <img src="./fa.webp" alt="" className="product__content--img" />
+                <img src={item.sale ? item.sale.url : './10.webp'} alt="" className="product__content--img" />
                 {/* <div className="product__content--img" /> */}
                 <div className="product__content--text">
                     <p className="product__content--name">{item.name}</p>
-                    <p className="product__content--sale--price">{item.price.toLocaleString('en-US')}đ</p>
+                    <p className="product__content--price">{item.price.toLocaleString('en-US')}đ</p>
+                    <p className="product__content--sale--price">
+                        {(item.sale && item.sale.percent
+                            ? item.price - (item.price * item.sale.percent) / 100
+                            : item.price
+                        ).toLocaleString('en-US')}
+                        đ
+                    </p>
                     {/* <span className="product__content--price">{item.price}đ</span> */}
-                    <Tooltip title="Add to cart" placement="topRight">
+                    {/* <Tooltip title="Add to cart" placement="topRight">
                         <div className="buy" onClick={(e) => handleAddCart(e, item.Id)}>
                             <FontAwesomeIcon icon={faBagShopping} size="xl" className="buy-icon" />
                         </div>
-                    </Tooltip>
+                    </Tooltip> */}
                     <div className="flashsale__content--bought">
                         <div className="bought">
                             <img
@@ -90,7 +98,7 @@ function Cake({ item, setShow }) {
                         <div
                             className="bought__up"
                             style={{
-                                width: `${(item.sold / (item.inventory + item.sold)) * 100}%`,
+                                width: `${Math.floor((item.sold / item.quantity) * 100)}%`,
                             }}
                         ></div>{' '}
                     </div>
@@ -98,7 +106,8 @@ function Cake({ item, setShow }) {
 
                 <img src={item.images} alt="" className="product__content--img--foreign" />
             </Link>
-            {contextHolder2}
+
+            {/* {contextHolder2} */}
         </>
     );
 }

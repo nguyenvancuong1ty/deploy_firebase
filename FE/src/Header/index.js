@@ -1,21 +1,109 @@
 import './Header.css';
+import '../Cart/Cart.scss';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import 'react-toastify/dist/ReactToastify.css';
 import Search from '~/Search';
-import { reset, setCurrent, setDataCart, setTypeProduct } from '~/redux';
+import { reset, setCurrent, setDataCart, setAuth, setNumberNotify, setTypeProduct } from '~/redux';
 import { Modal } from 'antd';
 import Cart from '~/Cart';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
+import Notify from '~/component/Notify';
+
+import { db, messaging } from '~/firebase';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { toast } from 'react-toastify';
+import { onMessage } from 'firebase/messaging';
+
 const { confirm } = Modal;
 function Header(props) {
     const dispatch = useDispatch();
     const number = useSelector((state) => state.numberReducer.number);
+    const numberNotify = useSelector((state) => state.numberNotifyReduce.numberNotify);
     const dataCart = useSelector((state) => state.dataCartReducer.dataCart);
+    const isLogin = useSelector((state) => state.AuthReducer.Auth);
     const uid = localStorage.getItem('uid');
-    const [active, setActive] = useState(1);
+    const [showListNotify, setShowListNotify] = useState(false);
+
+    const [loading, setLoading] = useState(true);
+    const [notifyData, setNotifyData] = useState([]);
+    useEffect(() => {
+        onMessage(messaging, (payload) => {
+            console.log(payload);
+            toast.info('Bạn có 1 thông báo mới', {
+                position: 'bottom-left',
+                autoClose: 4000,
+                hideProgressBar: false,
+                progress: undefined,
+                theme: 'light',
+            });
+        });
+    });
+    useEffect(() => {
+        const handleClick = () => {
+            showListNotify && setShowListNotify(false);
+        };
+
+        window.addEventListener('click', handleClick);
+
+        return () => {
+            window.removeEventListener('click', handleClick);
+        };
+    }, [showListNotify]);
+
+    useEffect(() => {
+        setLoading(true);
+        const notifyRef = collection(db, 'notify');
+        const queryRef = query(
+            notifyRef,
+            where('user_id', '==', [localStorage.getItem('uid')]),
+            where('deleted', '==', false),
+            orderBy('time', 'desc'),
+        );
+
+        const queryRefAll = query(notifyRef, where('isAll', '==', true), where('deleted', '==', false));
+
+        const unsubscribe = onSnapshot(queryRef, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const newNotify = change.doc.data();
+                    localStorage.getItem('uid') &&
+                        setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
+                }
+            });
+
+            setLoading(false);
+        });
+
+        const unsubscribeAll = onSnapshot(queryRefAll, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const newNotify = change.doc.data();
+                    localStorage.getItem('uid') &&
+                        setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
+                }
+            });
+
+            setLoading(false);
+        });
+
+        return () => {
+            unsubscribe();
+            unsubscribeAll();
+        };
+    }, [isLogin]);
+    useEffect(() => {
+        const newData =
+            notifyData.length > 0 &&
+            notifyData.filter((item) => {
+                return !item.isRead || !item.user_id.includes(localStorage.getItem('uid'));
+            });
+        dispatch(setNumberNotify(newData.length));
+    }, [notifyData]);
     let number_product =
         Array.isArray(dataCart) && dataCart.length > 0
             ? dataCart.reduce((init, item) => {
@@ -24,7 +112,6 @@ function Header(props) {
             : 0;
     useEffect(() => {
         dispatch(setCurrent(number_product));
-        // eslint-disable-next-line
     }, [number_product]);
     const navigate = useNavigate();
     useEffect(() => {
@@ -38,9 +125,9 @@ function Header(props) {
             })
                 .then((res) => {
                     const newData =
-                        res.data &&
+                        res.data.metadata &&
                         res.data.metadata.sort((a, b) => {
-                            return a.product.price - b.product.price;
+                            return b.createdDate._seconds - a.createdDate._seconds;
                         });
                     dispatch(setDataCart(newData));
                 })
@@ -58,7 +145,16 @@ function Header(props) {
             onOk() {
                 localStorage.clear();
                 dispatch(reset());
+                dispatch(setNumberNotify(0));
+                dispatch(setAuth({}));
                 props.setUid(null);
+                toast.success('Đăng xuất thành công', {
+                    position: 'bottom-left',
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    progress: undefined,
+                    theme: 'light',
+                });
                 navigate('/');
             },
             onCancel() {
@@ -67,17 +163,19 @@ function Header(props) {
         });
     };
     const handleClickOption = () => {};
+    useEffect(() => {
+        const newData = notifyData.sort((a, b) => {
+            return b.time.seconds - a.time.seconds;
+        });
+        setNotifyData(newData);
+    }, [notifyData]);
     return (
         <header>
             <div className="container res_header">
                 <div className="row header">
                     <div className="col-xl-3">
                         <NavLink to="/" className="res_logo">
-                            <img
-                                src="https://theme.hstatic.net/200000460475/1000990214/14/logo.png?v=127"
-                                alt=""
-                                className="logo"
-                            />
+                            <img src="/logo.webp" alt="" className="logo" />
                         </NavLink>
                         <div className="opstion" onClick={handleClickOption}>
                             <div className="opstion--icon"></div>
@@ -100,15 +198,27 @@ function Header(props) {
                                     <p className="header__opstion--title">Đơn hàng</p>
                                 </NavLink>
                             </li>
-                            <li className="shop header__opstion--item">
-                                <NavLink to="/shop" className="header__opstion--link">
-                                    <img
-                                        src="https://raw.githubusercontent.com/nguyenvancuong1ty/imagas/main/ba.png"
-                                        alt=""
-                                        className="header__opstion--img"
+                            <li
+                                className="shop header__opstion--item"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowListNotify(true);
+                                }}
+                            >
+                                <div className="header__opstion--link">
+                                    <FontAwesomeIcon
+                                        icon={faBell}
+                                        className={`header__opstion--img ${numberNotify > 0 && 'notify__icon'}`}
+                                        size="xl"
                                     />
-                                    <p className="header__opstion--title">Thông tin</p>
-                                </NavLink>
+                                    <p className="header__opstion--title">Thông báo</p>{' '}
+                                    {numberNotify > 0 && (
+                                        <div className="number__product">
+                                            <span className="number">{numberNotify}</span>
+                                        </div>
+                                    )}
+                                    {showListNotify && <Notify loading={loading} notifyData={notifyData} />}
+                                </div>
                             </li>
                             <li className="header__opstion--item account">
                                 {uid ? (
@@ -151,7 +261,7 @@ function Header(props) {
                                         <span className="number">{number}</span>
                                     </div>
                                 </div>
-                                {props.showCart && <Cart uid={uid} dataCart={dataCart} />}
+                                {props.showCart && <Cart uid={uid} dataCart={dataCart} number={number} />}
                             </li>
                         </ul>
                     </div>
@@ -162,9 +272,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('cake'));
-                                setActive(1);
+                                props.setActive(1);
                             }}
-                            className={active === 1 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 1 ? 'head__navbar--item active' : 'head__navbar--item'}
                             id="intro"
                         >
                             <div className="head__navbar--link">
@@ -175,9 +285,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('candy'));
-                                setActive(2);
+                                props.setActive(2);
                             }}
-                            className={active === 2 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 2 ? 'head__navbar--item active' : 'head__navbar--item'}
                         >
                             <div className="head__navbar--link">
                                 <b>Kẹo</b>
@@ -187,9 +297,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('houseware'));
-                                setActive(3);
+                                props.setActive(3);
                             }}
-                            className={active === 3 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 3 ? 'head__navbar--item active' : 'head__navbar--item'}
                         >
                             <div className="head__navbar--link">
                                 <b>Đồ gia dụng </b>
@@ -199,9 +309,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('electronic device'));
-                                setActive(4);
+                                props.setActive(4);
                             }}
-                            className={active === 4 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 4 ? 'head__navbar--item active' : 'head__navbar--item'}
                         >
                             <div className="head__navbar--link">
                                 <b>Đồ điện tử</b>
@@ -211,9 +321,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('smart device'));
-                                setActive(5);
+                                props.setActive(5);
                             }}
-                            className={active === 5 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 5 ? 'head__navbar--item active' : 'head__navbar--item'}
                         >
                             <div className="head__navbar--link">
                                 <b>Thiết bị thông minh</b>
@@ -223,9 +333,9 @@ function Header(props) {
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('clothes'));
-                                setActive(6);
+                                props.setActive(6);
                             }}
-                            className={active === 6 ? 'head__navbar--item active' : 'head__navbar--item'}
+                            className={props.active === 6 ? 'head__navbar--item active' : 'head__navbar--item'}
                         >
                             <div className="head__navbar--link">
                                 <b>Quần áo</b>

@@ -10,7 +10,8 @@ const ACCESSTOKEN = 'ACCESSTOKEN';
 const TOTALCOIN = 'TOTALCOIN';
 const DATACART = 'DATACART';
 const TYPEPRODUCT = 'TYPEPRODUCT';
-
+const NUMBERNOTIFY = 'NUMBERNOTIFY';
+const AUTH = 'AUTH';
 // Action creators
 const setToken = (value) => ({
     type: ACCESSTOKEN,
@@ -48,14 +49,25 @@ const decrease = () => ({
     type: DECREASE,
 });
 
+// Notify
+const setNumberNotify = (value) => ({
+    type: NUMBERNOTIFY,
+    payload: value,
+});
+// is Login
+const setAuth = (value) => ({
+    type: AUTH,
+    payload: value,
+});
 // Initial state
 const initialState = {
     number: 0,
-    isAuth: localStorage.getItem('login'),
+    Auth: {},
     accessToken: '1',
     totalCoin: 0,
     dataCart: [],
     typeProduct: 'cake',
+    numberNotify: 0,
 };
 
 // Reducer
@@ -80,6 +92,18 @@ const numberReducer = (state = initialState, action) => {
             return {
                 ...state,
                 number: action.payload,
+            };
+        default:
+            return state;
+    }
+};
+
+const AuthReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case AUTH:
+            return {
+                ...state,
+                Auth: action.payload,
             };
         default:
             return state;
@@ -130,9 +154,41 @@ const dataCartReducer = (state = initialState, action) => {
             return state;
     }
 };
+
+const numberNotifyReduce = (state = initialState, action) => {
+    switch (action.type) {
+        case NUMBERNOTIFY:
+            return {
+                ...state,
+                numberNotify: action.payload,
+            };
+        default:
+            return state;
+    }
+};
 // Tạo Redux store với reducer
 const store = configureStore({
-    reducer: { numberReducer, tokenReducer, totalCoinReducer, dataCartReducer, typeProductReducer },
+    reducer: {
+        numberReducer,
+        tokenReducer,
+        totalCoinReducer,
+        dataCartReducer,
+        typeProductReducer,
+        numberNotifyReduce,
+        AuthReducer,
+    },
 });
 
-export { increment, reset, setCurrent, decrease, store, setToken, setTotalCoin, setDataCart, setTypeProduct };
+export {
+    increment,
+    reset,
+    setCurrent,
+    decrease,
+    store,
+    setToken,
+    setTotalCoin,
+    setDataCart,
+    setTypeProduct,
+    setNumberNotify,
+    setAuth,
+};

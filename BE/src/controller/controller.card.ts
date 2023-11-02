@@ -14,15 +14,24 @@ class CartController {
 
     async addToCart(req: Request, res: Response): Promise<Response | any> {
         const data = await CartService.addToCart(req, res);
-        if (data) {
+        if (data.result) {
             return new CREATED(data).send(res);
         } else {
-            return new Conflict('Tài nguyên tồn tại').send(res);
+            return new CREATED(data, "Tài nguyên tồn tại").send(res);
         }
     }
 
     async updateCart(req: Request, res: Response): Promise<Response | any> {
         const data = await CartService.updateCart(req);
+        if (data) {
+            return new OK(data, 'update OK').send(res);
+        } else {
+            return new INTERNAL_SERVER_ERROR().send(res);
+        }
+    }
+
+    async deleteCart(req: Request, res: Response): Promise<Response | any> {
+        const data = await CartService.deleteCart(req);
         if (data) {
             return new OK(data, 'update OK').send(res);
         } else {

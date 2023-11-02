@@ -7,15 +7,18 @@ import { checkApiKey } from '../middleware/auth.Apikey';
 import { authentication } from '../middleware/authentication';
 import { authorization } from '../middleware/authorization';
 import { Response } from 'express';
+
 const accountController = new AccountController();
 // accountRouter.use(checkApiKey);
-accountRouter.get('/account', authorization(['admin']), (req: Request, res: Response) => {
-    res.json('Hello! this is website API of cuongdepchai 😍😍😍');
-});
 accountRouter.post('/account/login', handleError(accountController.login));
 accountRouter.post('/account/login-google', handleError(accountController.handleLoginWithGoogle));
-accountRouter.post('/account/', checkApiKey, handleError(accountController.create));
-accountRouter.post('/account/:id', checkApiKey, handleError(accountController.changePassword));
+accountRouter.post('/account/', handleError(accountController.create));
+accountRouter.post('/account/:id', handleError(accountController.changePassword));
+accountRouter.patch('/account/:id', handleError(accountController.update));
 accountRouter.get('/account/confirm-code/:email', handleError(accountController.confirmCode));
 accountRouter.post('/account/change-password/:email', authentication, handleError(accountController.forgetPassword));
+accountRouter.post('/registerNotify', handleError(accountController.registerNotify));
+accountRouter.post('/notify-all', handleError(accountController.notifyAll));
+accountRouter.get('/account', authorization(['admin']), handleError(accountController.getAllAccount));
+
 export default accountRouter;

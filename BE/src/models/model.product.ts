@@ -1,5 +1,4 @@
 interface Product {
-    // Id: string;
     sold: number;
     images: string;
     quantity: number;
@@ -10,6 +9,8 @@ interface Product {
     detail: string;
     inventory: number;
     type: string;
+    sale: string;
+    attribute: object;
     timeCreate: object;
 }
 

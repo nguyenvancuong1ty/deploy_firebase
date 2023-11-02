@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    Test Notify
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
+      import { getMessaging } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyDcuDIddVQKAQoj0yMLrWsDTQDDAaAFY00",
+        authDomain: "fir-44abd.firebaseapp.com",
+        databaseURL: "https://fir-44abd-default-rtdb.firebaseio.com",
+        projectId: "fir-44abd",
+        storageBucket: "fir-44abd.appspot.com",
+        messagingSenderId: "513391440326",
+        appId: "1:513391440326:web:1c076486af50e8572742c7",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
+
+      const registerNotification = async () => {
+        try {
+          const currentToken = await getToken(messaging, {
+            vapidKey:
+              "BMHxPXJyw10y2qfn3W7IljBQE7u1YW7ORLeAubHV3_lJUPiOQBGhndWSv4ZbSXHkIUIzAhyN1AaKmst_naCqNZ8",
+          });
+          console.log("Chấp nhận nhận thông báo", currentToken);
+        } catch (error) {
+          console.log("Error:------------------", error);
+        }
+      };
+    </script>
+  </body>
+</html>

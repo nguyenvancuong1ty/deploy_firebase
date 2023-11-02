@@ -1,4 +1,5 @@
 .wrap_cart,
+.wrap_notify,
 .search {
     padding: 12px 8px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -26,6 +27,8 @@
         }
     }
     .delete {
+        position: absolute;
+        right: 12px;
         padding: 4px;
         min-width: 50px;
         border: none;
@@ -51,7 +54,7 @@
             .price {
                 text-align: left;
                 display: inline-block;
-                min-width: 100px;
+                min-width: 140px;
             }
 
             .b {
@@ -99,6 +102,7 @@
         display: flex;
         align-items: center;
         animation: none;
+        color: black;
     }
 
     .images {
@@ -124,5 +128,27 @@
         border-radius: 999px;
         margin: 10px 0;
         font-weight: 600;
+    }
+}
+
+.wrap_notify {
+    padding: 0;
+
+    .items {
+        padding: 12px;
+        justify-content: space-between;
+        border-bottom: 1px solid #5d5c5c;
+        cursor: pointer;
+
+        &:hover {
+            background: #f3f3f3;
+        }
+    }
+    .content {
+        max-width: 240px;
+        overflow: hidden;
+        .price {
+            white-space: nowrap;
+        }
     }
 }

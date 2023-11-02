@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const firebase_1 = require("../db/firebase");
 const response_error_1 = require("../utils/response.error");
 const path_1 = __importDefault(require("path"));
+// import { getAccessToken } from '../utils/auth2.0';
 const mail_define_1 = require("../utils/mail.define");
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
@@ -43,7 +44,6 @@ class AccountService {
     static login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
-            console.log(email, password);
             const querySnapshot = yield firebase_1.db.collection('account').where('username', '==', email).get();
             const data = [];
             querySnapshot.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +57,7 @@ class AccountService {
                 const refreshToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
                     expiresIn: '7d',
                 });
-                res.cookie('refreshToken', refreshToken, { httpOnly: true });
+                res.cookie('refreshToken', accessToken, { httpOnly: true });
                 return {
                     data: data[0],
                     accessToken: accessToken,
@@ -96,6 +96,18 @@ class AccountService {
             }
             res.cookie('refreshToken', refreshToken, { httpOnly: true });
             return { accessToken, address: data.address };
+        });
+    }
+    static getAllAccount(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const accountRef = firebase_1.db.collection('account');
+            const querySnapshot = yield accountRef.get();
+            const response = querySnapshot.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
+                const account = Object.assign({ Id: doc.id }, doc.data());
+                return Object.assign({}, account);
+            }));
+            const data = yield Promise.all(response);
+            return data;
         });
     }
     static create(req, res) {
@@ -144,28 +156,9 @@ class AccountService {
     }
     static update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, username, password } = req.body;
-            const querySnapshot = yield firebase_1.db.collection('account').where('username', '==', email).get();
-            if (querySnapshot.docs[0]) {
-                return false;
-            }
-            else {
-                const newAccount = {
-                    active: false,
-                    address: '',
-                    age: 0,
-                    deleted: false,
-                    fullName: '',
-                    password: bcrypt.hashSync(password, 8),
-                    salary: 0,
-                    timeCreate: firebase_1.Timestamp.fromDate(new Date()),
-                    type_account: 'customer',
-                    username: email,
-                };
-                const response = yield firebase_1.db.collection('account').update(newAccount);
-                console.log(response.id);
-                return response.id;
-            }
+            const { id } = req.params;
+            const response = yield firebase_1.db.collection('account').doc(id).update(req.body);
+            return { Id: response.id };
         });
     }
     static changePassword(req, res) {
@@ -178,7 +171,6 @@ class AccountService {
                     .collection('account')
                     .doc(id)
                     .update({ password: bcrypt.hashSync(newPassword, 8) });
-                console.log(response);
                 return response;
             }
             else {
@@ -189,7 +181,6 @@ class AccountService {
     static confirmCode(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const transporter = yield (0, mail_define_1.mailDefine)();
-            console.log('đi');
             const code = Math.floor((Math.random() + 1) * 10000);
             try {
                 yield firebase_1.db.runTransaction((transaction) => __awaiter(this, void 0, void 0, function* () {
@@ -226,7 +217,6 @@ class AccountService {
                 return true;
             }
             catch (error) {
-                console.log('E--', error);
                 return false;
             }
         });
@@ -248,7 +238,6 @@ class AccountService {
                 })
                     .then((res) => __awaiter(this, void 0, void 0, function* () {
                     const account = yield firebase_1.db.collection('account').where('email', '==', req.params.email).get();
-                    console.log(account && account.docs[0].id);
                     account &&
                         (yield firebase_1.db
                             .collection('account')

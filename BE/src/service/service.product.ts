@@ -2,44 +2,63 @@ import { Request, Response } from 'express';
 import { Timestamp, db } from '../db/firebase';
 import Product from '../models/model.product'; // Import your Product model
 import axios from 'axios';
+import SaleService from './service.sale';
 
 class ProductService {
-    static async getProductByType(type: string): Promise<Array<Product>> {
+    static async getProductByType(type: string): Promise<Array<object>> {
         const productRef = db.collection('products');
         const querySnapshot = await productRef.where('deleted', '==', false).where('type', '==', type).get();
-        const response: Array<Product> = [];
-        querySnapshot.forEach((doc: any) => {
+
+        // Sử dụng map để tạo ra một mảng các promises
+        const promises = querySnapshot.docs.map(async (doc: any) => {
             const product: Product = { Id: doc.id, ...doc.data() };
-            response.push(product);
+
+            const sale: object | string = product.sale ? await SaleService.getSale(product.sale) : '';
+            return { ...product, sale: sale };
         });
+
+        // Sử dụng Promise.all để chờ tất cả các promises hoàn thành
+        const response = await Promise.all(promises);
 
         return response;
     }
 
-    static async getAllProduct(): Promise<Array<Product>> {
+    static async getProductById(id: string): Promise<object> {
+        const productRef = db.collection('products').doc(id);
+        const doc = await productRef.get();
+        let response: any = doc.data();
+        const sale: object | string = response.sale ? await SaleService.getSale(response.sale) : '';
+        response = { ...response, sale: sale };
+        return response;
+    }
+
+    static async getAllProduct(): Promise<Array<object>> {
         const productRef = db.collection('products');
         const querySnapshot = await productRef.where('deleted', '==', false).get();
-        const data: Array<Product> = [];
-        querySnapshot.forEach((doc: any) => {
+        const data = querySnapshot.docs.map(async (doc: any) => {
             const product: Product = { Id: doc.id, ...doc.data() };
-            data.push(product);
+            const sale: object | string = product.sale ? await SaleService.getSale(product.sale) : '';
+            return { ...product, sale: sale };
         });
-        return data;
+        const response = Promise.all(data);
+        return response;
     }
 
     static async addAProduct(req: Request, res: Response): Promise<Product> {
-        const { name, detail, quantity, price, sold, inventory, weight, images, type } = req.body;
+        const newP = { ...req.body };
         const newProduct: Product = {
-            sold: sold,
-            images: images,
-            quantity: quantity,
-            deleted: false,
-            price: price,
-            name: name,
-            weight: weight,
-            detail: detail,
-            inventory: inventory,
-            type: type,
+            sold: newP.sold,
+            images: newP.images,
+            quantity: newP.quantity,
+            deleted: newP.false,
+            price: newP.price,
+            name: newP.name,
+            weight: newP.weight,
+            detail: newP.detail,
+            inventory: newP.inventory,
+            type: newP.type,
+            sale: newP.sale,
+            attribute: newP.attribute,
             timeCreate: Timestamp.fromDate(new Date()),
         };
         const response = await db.collection('products').add(newProduct);
@@ -56,22 +75,11 @@ class ProductService {
         return response;
     }
 
-    static async updateProduct(req: Request): Promise<Array<Product>> {
+    static async updateProduct(req: Request): Promise<object> {
         const { id } = req.params;
-        const { name, detail, quantity, price, sold, inventory, weight, images, type } = req.body;
+        const { name, detail, type, price, weight, inventory, quantity, sale, attributes, images } = req.body;
         const productRef = db.collection('products').doc(id);
-        const response = await productRef.update({
-            name: name,
-            detail: detail,
-            quantity: quantity,
-            price: price,
-            sold: sold,
-            inventory: inventory,
-            weight: weight,
-            images: images,
-            type: type,
-            timeUpdate: Timestamp.fromDate(new Date()),
-        });
+        const response = await productRef.set({ ...req.body, timeUpdate: Timestamp.fromDate(new Date()) });
         return response;
     }
 
@@ -84,11 +92,29 @@ class ProductService {
             .get(url)
             .then((response) => {
                 res.header('Access-Control-Allow-Origin', '*');
-                return res.json(response.data.rows[0].elements[0].distance.value);
+                console.log(response.data);
+
+                return res.json(response.data && response.data.rows[0].elements[0].distance.value);
             })
             .catch((e) => {
-                res.status(500).json({ error: 'Đã xảy ra lỗi', status: e });
+                res.status(500).json({ error: `Đã xảy ra lỗi ${e}` });
             });
+    }
+
+    static async getExpiredProducts(date: number): Promise<Array<object>> {
+        const today = new Date();
+        const tenDaysLater = new Date(today);
+        tenDaysLater.setDate(today.getDate() + date);
+        const productsRef = db.collection('products');
+        const productData = await productsRef.where('expiryDate', '>', today).where('expiryDate', '<=', tenDaysLater).get();
+        const response = productData.docs.map(async (doc: any) => {
+            return {
+                id: doc.id,
+                ...doc.data(),
+            };
+        });
+        const data = await Promise.all(response);
+        return data;
     }
 }
 

@@ -2,7 +2,8 @@
     --primary-color--: #a50a06;
 }
 .App {
-    min-height: 120vh;
+    /* min-height: 120vh; */
+    /* background: #ccc; */
 }
 
 body::-webkit-scrollbar {
@@ -156,11 +157,19 @@ body::-webkit-scrollbar {
 }
 
 @keyframes showBilling {
-    from {
+    0% {
         opacity: 0.5;
         transform: translateX(50%);
     }
-    to {
+    80% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateX(1.5%);
+    }
+    100% {
         opacity: 1;
         transform: translateX(0);
     }
@@ -174,8 +183,8 @@ body::-webkit-scrollbar {
     bottom: 0;
     right: 0;
     justify-content: center;
-    background-color: white;
-    animation: showBilling 0.4s linear;
+    background-color: #f2f2f2;
+    animation: showBilling 0.7s ease-out;
 }
 
 .billing-wrapper .close {
@@ -249,6 +258,14 @@ body::-webkit-scrollbar {
     background-color: rgba(255, 249, 249, 1);
     align-items: center;
     justify-content: center;
+}
+
+.subLoading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 .overlay-wrap {
     margin-top: 132px !important;
@@ -466,4 +483,9 @@ body::-webkit-scrollbar {
     .res_logo {
         display: none;
     }
+}
+
+.menu__options {
+    z-index: 9;
+    width: 200px !important;
 }

@@ -117,6 +117,21 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
             onCancel() {},
         });
     };
+    const addLeadingZero = (value) => {
+        if (value < 10) {
+            return '0' + value;
+        }
+        return value.toString();
+    };
+    const getDateFormat = (time) => {
+        const year = time.getFullYear();
+        const month = addLeadingZero(time.getMonth() + 1); // Tháng bắt đầu từ 0, cộng thêm 1 và thêm số 0 nếu cần.
+        const day = addLeadingZero(time.getDate());
+        const hour = addLeadingZero(time.getHours());
+        const minute = addLeadingZero(time.getMinutes());
+        const second = addLeadingZero(time.getSeconds());
+        return `${day}/${month}/${year}  ${hour}:${minute}:${second}`;
+    };
     const handleCancel = (item) => {
         confirm({
             zIndex: 9999,
@@ -144,7 +159,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
             onCancel() {},
         });
     };
-    console.log(buttonActive, '----', type);
+
     return (
         <div className="bill-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -197,16 +212,16 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
             <table className="bill-table">
                 <thead>
                     <tr>
-                        <th>Order total (excluding shipping)</th>
-                        <th>Shipping cost</th>
-                        <th>Total</th>
-                        <th>Weight</th>
-                        <th>Shipping address</th>
-                        <th>Shop address</th>
-                        {type === 'pending' && <th>Order date</th>}
-                        {type === 'shipping' && <th>Order received date</th>}
-                        {type === 'shipped' && <th>Shipped date</th>}
-                        <th>Action</th>
+                        <th>Giá</th>
+                        <th>Tiền ship</th>
+                        <th>Tổng cộng</th>
+                        <th>cân nặng</th>
+                        <th>Địa chỉ</th>
+                        <th>Địa chỉ shop</th>
+                        {type === 'pending' && <th>Ngày đặt</th>}
+                        {type === 'shipping' && <th>Ngày ship</th>}
+                        {type === 'shipped' && <th>Ngày nhận hàng</th>}
+                        <th>Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -219,10 +234,11 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 <td>{item.total_amount.toLocaleString('en-US')}đ</td>
                                 <td>{item.weight}kg</td>
                                 <td>{item.shipping_address}</td>
+
                                 <td>394 Mỹ Đình 1, Hà Nội</td>
                                 {type === 'pending' && (
                                     <>
-                                        <td>{new Date(item.order_date.seconds * 1000).toString().slice(0, -26)}</td>
+                                        <td>{getDateFormat(new Date(item.order_date._seconds * 1000))}</td>
                                         <td>
                                             <Button onClick={() => handlePickup(item)}>Nhận</Button>
                                         </td>
@@ -230,11 +246,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 )}
                                 {type === 'shipping' && (
                                     <>
-                                        <td>
-                                            {new Date(item.start_shipping_date._seconds * 1000)
-                                                .toString()
-                                                .slice(0, -26)}
-                                        </td>
+                                        <td>{getDateFormat(new Date(item.start_shipping_date._seconds * 1000))}</td>
                                         <td>
                                             <Button onClick={() => handleComplete(item)}>Hoàn thành</Button>
                                             <Button onClick={() => handleCancel(item)}>Hủy</Button>
@@ -243,7 +255,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 )}
                                 {type === 'shipped' && (
                                     <>
-                                        <td>{new Date(item.shipped_date._seconds * 1000).toString().slice(0, -26)}</td>
+                                        <td>{getDateFormat(new Date(item.shipped_date._seconds * 1000))}</td>
                                         <td>{item.status}</td>
                                     </>
                                 )}

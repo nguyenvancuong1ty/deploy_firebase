@@ -17,6 +17,12 @@ const response_success_1 = require("../utils/response.success");
 const service_order_1 = __importDefault(require("../service/service.order"));
 const response_error_1 = require("../utils/response.error");
 class OrderController {
+    getAllOrder(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield service_order_1.default.getAllOrder(req, res);
+            return new response_success_1.OK(data).send(res);
+        });
+    }
     getOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield service_order_1.default.getOrder(req, res);

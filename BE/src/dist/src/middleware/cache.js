@@ -12,13 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveDataToCache = exports.client = exports.cache = void 0;
 const { createClient } = require('redis');
 const response_success_1 = require("../utils/response.success");
-const client = createClient({
-    password: 'F1ZhPJA8Vdjfm3ExJwKhAPIzRPLkGVQf',
-    socket: {
-        host: 'redis-17768.c299.asia-northeast1-1.gce.cloud.redislabs.com',
-        port: 17768,
-    },
-});
+// const client = createClient({
+//     password: 'F1ZhPJA8Vdjfm3ExJwKhAPIzRPLkGVQf',
+//     socket: {
+//         host: 'redis-17768.c299.asia-northeast1-1.gce.cloud.redislabs.com',
+//         port: 17768,
+//     },
+// });
+const client = createClient();
 exports.client = client;
 const cache = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -34,7 +35,7 @@ const cache = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         }
     }
     catch (error) {
-        console.log('lỗi');
+        console.log('lỗi', error);
         client.isOpen && (yield client.disconnect());
         next();
     }
@@ -45,5 +46,6 @@ const saveDataToCache = (req, data) => __awaiter(void 0, void 0, void 0, functio
         yield client.set('__express__' + (req.originalUrl || req.url), JSON.stringify(data));
         yield client.disconnect();
     }
+    return;
 });
 exports.saveDataToCache = saveDataToCache;

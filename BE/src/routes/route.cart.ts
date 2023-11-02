@@ -11,4 +11,5 @@ const cartController = new CartController();
 cartRouter.get('/cart/:uid', authentication, handleError(cartController.getCartByUser));
 cartRouter.post('/cart', authentication, handleError(cartController.addToCart));
 cartRouter.patch('/cart/:id', authentication, handleError(cartController.updateCart));
+cartRouter.delete('/cart/:id', authentication, handleError(cartController.deleteCart));
 export default cartRouter;

@@ -3,7 +3,7 @@ import { auth, provider } from './firebase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGooglePlusG } from '@fortawesome/free-brands-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrent } from './redux';
+import { setCurrent, setAuth } from './redux';
 import axios from 'axios';
 
 const LoginGoogle = ({ setShow, setUid }) => {
@@ -34,6 +34,7 @@ const LoginGoogle = ({ setShow, setUid }) => {
             localStorage.setItem('uid', user.uid);
             localStorage.setItem('account', 'customer');
             dispatch(setCurrent(number));
+            dispatch(setAuth({ ...ok.data.metadata.data }));
             setShow(false);
         } catch (error) {
             // Xử lý lỗi đăng nhập

@@ -119,20 +119,21 @@ const OrderPage = () => {
     const handleChangeTimePicker = (value) => {
         if (value) {
             const newData = dataFilter.filter((item) => {
-                if (item.status === 'pending')
+                if (item.status === 'pending') {
                     return (
-                        item.order_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.order_date.seconds * 1000 < value[1].$d.getTime()
+                        item.order_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.order_date._seconds * 1000 < value[1].$d.getTime()
                     );
+                }
                 if (item.status === 'shipping')
                     return (
-                        item.start_shipping_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.start_shipping_date.seconds * 1000 < value[1].$d.getTime()
+                        item.start_shipping_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.start_shipping_date._seconds * 1000 < value[1].$d.getTime()
                     );
                 if (item.status === 'shipped')
                     return (
-                        item.shipped_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.shipped_date.seconds * 1000 < value[1].$d.getTime()
+                        item.shipped_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.shipped_date._seconds * 1000 < value[1].$d.getTime()
                     );
                 return false;
             });
@@ -167,6 +168,21 @@ const OrderPage = () => {
             },
             onCancel() {},
         });
+    };
+    const addLeadingZero = (value) => {
+        if (value < 10) {
+            return '0' + value;
+        }
+        return value.toString();
+    };
+    const getDateFormat = (time) => {
+        const year = time.getFullYear();
+        const month = addLeadingZero(time.getMonth() + 1); // Tháng bắt đầu từ 0, cộng thêm 1 và thêm số 0 nếu cần.
+        const day = addLeadingZero(time.getDate());
+        const hour = addLeadingZero(time.getHours());
+        const minute = addLeadingZero(time.getMinutes());
+        const second = addLeadingZero(time.getSeconds());
+        return `${day}/${month}/${year}  ${hour}:${minute}:${second}`;
     };
     return (
         <Container>
@@ -212,15 +228,15 @@ const OrderPage = () => {
                     <table className="bill-table">
                         <thead>
                             <tr>
-                                <th>Order total (excluding shipping)</th>
-                                <th>Shipping cost</th>
-                                <th>Total</th>
-                                <th>Weight</th>
-                                <th>Shipping address</th>
-                                <th>Shop address</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>Giá</th>
+                                <th>Tiền ship</th>
+                                <th>Tổng cộng</th>
+                                <th>Cân nặng</th>
+                                <th>Địa chỉ ship</th>
+                                <th>Địa chỉ shop</th>
+                                <th>Ngày</th>
+                                <th>Trạng thái</th>
+                                <th>Lựa chọn</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -234,21 +250,13 @@ const OrderPage = () => {
                                         <td>{item.shipping_address}</td>
                                         <td>394 Mỹ Đình 1, Hà Nội</td>
                                         {item.status === 'pending' && (
-                                            <td>
-                                                {new Date(item.order_date._seconds * 1000).toString().slice(0, -26)}
-                                            </td>
+                                            <td>{getDateFormat(new Date(item.order_date._seconds * 1000))}</td>
                                         )}
                                         {item.status === 'shipping' && (
-                                            <td>
-                                                {new Date(item.start_shipping_date._seconds * 1000)
-                                                    .toString()
-                                                    .slice(0, -26)}
-                                            </td>
+                                            <td>{getDateFormat(new Date(item.start_shipping_date._seconds * 1000))}</td>
                                         )}
                                         {item.status === 'shipped' && (
-                                            <td>
-                                                {new Date(item.shipped_date._seconds * 1000).toString().slice(0, -26)}
-                                            </td>
+                                            <td>{getDateFormat(new Date(item.shipped_date._seconds * 1000))}</td>
                                         )}
                                         <td>{item.status}</td>
                                         <td>

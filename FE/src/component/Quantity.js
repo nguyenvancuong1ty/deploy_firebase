@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { decrease, increment, setDataCart, setTotalCoin } from '~/redux';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'react-bootstrap';
 
 function Quantity({ item, checkOut }) {
     const totalCoin = useSelector((state) => state.totalCoinReducer.totalCoin);
@@ -9,7 +10,11 @@ function Quantity({ item, checkOut }) {
     const [num, setNum] = useState(item.quantity);
     const handleIncrease = async (item) => {
         if (checkOut.some((checkedItem) => checkedItem.cakeID === item.cakeID)) {
-            dispatch(setTotalCoin(totalCoin + item.product.price));
+            dispatch(
+                setTotalCoin(
+                    totalCoin + (item.product.price - (item.product.price * item.product.sale.percent || 0) / 100),
+                ),
+            );
         }
         dispatch(increment());
         setNum((prev) => prev + 1);
@@ -41,7 +46,11 @@ function Quantity({ item, checkOut }) {
 
     const handleDecrease = async (item) => {
         if (checkOut.some((checkedItem) => checkedItem.cakeID === item.cakeID)) {
-            dispatch(setTotalCoin(totalCoin - item.product.price));
+            dispatch(
+                setTotalCoin(
+                    totalCoin - (item.product.price - (item.product.price * item.product.sale.percent || 0) / 100),
+                ),
+            );
         }
         dispatch(decrease());
         setNum((prev) => prev - 1);
@@ -75,7 +84,11 @@ function Quantity({ item, checkOut }) {
         const total =
             Array.isArray(checkOut) && checkOut.length > 0
                 ? checkOut.reduce((init, item) => {
-                      return init + item.product.price * item.quantity;
+                      return (
+                          init +
+                          (item.product.price - (item.product.price * item.product.sale.percent || 0) / 100) *
+                              item.quantity
+                      );
                   }, 0)
                 : 0;
         dispatch(setTotalCoin(total));
@@ -83,9 +96,13 @@ function Quantity({ item, checkOut }) {
     }, [checkOut]);
     return (
         <>
-            <span onClick={() => handleDecrease(item)}>-</span>
+            <Button variant="light" className="detail__info--number--btn" onClick={() => handleDecrease(item)}>
+                -
+            </Button>
             <b className="b">{num}</b>
-            <span onClick={() => handleIncrease(item)}>+</span>
+            <Button variant="light" className="detail__info--number--btn" onClick={() => handleIncrease(item)}>
+                +
+            </Button>
         </>
     );
 }

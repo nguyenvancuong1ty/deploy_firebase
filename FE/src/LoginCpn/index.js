@@ -3,15 +3,20 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import axios from 'axios';
 import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import LoadingAntd from '~/Loading/Loading.antd';
 import LoginFacebook from '~/LoginFacebook';
 import LoginGithub from '~/LoginGithub';
 import LoginGoogle from '~/LoginGoogle';
 import Register from '~/component/Register';
+import { setAuth } from '~/redux';
 const LoginCpn = ({ setShow, setUid }) => {
+    const dispatch = useDispatch();
     const [showRegister, setShowRegister] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const onFinish = async (values) => {
         setLoading(true);
         await axios({
@@ -27,9 +32,11 @@ const LoginCpn = ({ setShow, setUid }) => {
                 localStorage.setItem('account', res.data.metadata.data.type_account);
                 localStorage.setItem('token', res.data.metadata.accessToken);
                 setUid(res.data.metadata.data.Id);
+                dispatch(setAuth({ ...res.data.metadata.data }));
                 setTimeout(() => {
                     setLoading(false);
                     setShow(false);
+                    res.data.metadata.data.type_account === 'admin' && navigate('/admin/');
                 }, 1000);
             })
             .catch((e) => {

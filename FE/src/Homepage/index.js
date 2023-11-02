@@ -1,38 +1,56 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Col, Container, Row } from 'react-bootstrap';
 import Cake from '~/Cake';
-import useAxios from '~/useAxios';
 import { useSelector } from 'react-redux';
 import Footer from '~/component/Footer';
 import LoadingAntd from '~/Loading/Loading.antd';
+import MenuOption from '~/component/Menu_option';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function Home(props) {
     const typeProduct = useSelector((state) => state.typeProductReducer.typeProduct);
-    let { data, loading } = useAxios({
-        url: `${process.env.REACT_APP_API_URL}/product?type=${typeProduct}`,
-        method: 'get',
-        authentication: `Bearer ${localStorage.getItem('token')}`,
-    });
-
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const getData = async () => {
+            setLoading(true);
+            await axios({
+                method: 'get',
+                url: `${process.env.REACT_APP_API_URL}/product?type=${typeProduct}`,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+                .then((res) => {
+                    Array.isArray(res) ? setData(res.data.metadata) : setData([res.data.metadata]);
+                    setLoading(false);
+                })
+                .catch((e) => {
+                    setLoading(false);
+                    console.log(e.message);
+                });
+        };
+        getData();
+    }, [typeProduct]);
     return (
         <>
+            <MenuOption data={data} setData={setData} setLoading={setLoading}></MenuOption>
             <Container>
                 {loading && <LoadingAntd></LoadingAntd>}
-                {Array.isArray(data) && data.length <= 0 && !loading}
-                <div className="wrap-container">
-                    <Row lg={4} md={3} sm={2} xl={5} xs={2}>
-                        {Array.isArray(data) &&
-                            data.length > 0 &&
-                            !loading &&
-                            data[0].data.metadata.map((item) => {
+                {Array.isArray(data) && data.length > 0 && !loading && (
+                    <div className="wrap-container">
+                        <Row lg={4} md={3} sm={2} xl={5} xs={2}>
+                            {data[0].map((item) => {
                                 return (
                                     <Col key={item.Id} className="res_cake">
                                         <Cake item={item} setShow={props.setShow} />
                                     </Col>
                                 );
                             })}
-                    </Row>
-                </div>
+                        </Row>
+                    </div>
+                )}
             </Container>
             <Footer></Footer>
         </>

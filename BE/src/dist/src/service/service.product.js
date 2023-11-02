@@ -14,16 +14,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase_1 = require("../db/firebase");
 const axios_1 = __importDefault(require("axios"));
+const service_sale_1 = __importDefault(require("./service.sale"));
 class ProductService {
     static getProductByType(type) {
         return __awaiter(this, void 0, void 0, function* () {
             const productRef = firebase_1.db.collection('products');
             const querySnapshot = yield productRef.where('deleted', '==', false).where('type', '==', type).get();
-            const response = [];
-            querySnapshot.forEach((doc) => {
+            // Sử dụng map để tạo ra một mảng các promises
+            const promises = querySnapshot.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
                 const product = Object.assign({ Id: doc.id }, doc.data());
-                response.push(product);
-            });
+                const sale = product.sale ? yield service_sale_1.default.getSale(product.sale) : '';
+                return Object.assign(Object.assign({}, product), { sale: sale });
+            }));
+            // Sử dụng Promise.all để chờ tất cả các promises hoàn thành
+            const response = yield Promise.all(promises);
+            return response;
+        });
+    }
+    static getProductById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const productRef = firebase_1.db.collection('products').doc(id);
+            const doc = yield productRef.get();
+            let response = doc.data();
+            const sale = response.sale ? yield service_sale_1.default.getSale(response.sale) : '';
+            response = Object.assign(Object.assign({}, response), { sale: sale });
             return response;
         });
     }
@@ -31,28 +45,31 @@ class ProductService {
         return __awaiter(this, void 0, void 0, function* () {
             const productRef = firebase_1.db.collection('products');
             const querySnapshot = yield productRef.where('deleted', '==', false).get();
-            const data = [];
-            querySnapshot.forEach((doc) => {
+            const data = querySnapshot.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
                 const product = Object.assign({ Id: doc.id }, doc.data());
-                data.push(product);
-            });
-            return data;
+                const sale = product.sale ? yield service_sale_1.default.getSale(product.sale) : '';
+                return Object.assign(Object.assign({}, product), { sale: sale });
+            }));
+            const response = Promise.all(data);
+            return response;
         });
     }
     static addAProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, detail, quantity, price, sold, inventory, weight, images, type } = req.body;
+            const newP = Object.assign({}, req.body);
             const newProduct = {
-                sold: sold,
-                images: images,
-                quantity: quantity,
-                deleted: false,
-                price: price,
-                name: name,
-                weight: weight,
-                detail: detail,
-                inventory: inventory,
-                type: type,
+                sold: newP.sold,
+                images: newP.images,
+                quantity: newP.quantity,
+                deleted: newP.false,
+                price: newP.price,
+                name: newP.name,
+                weight: newP.weight,
+                detail: newP.detail,
+                inventory: newP.inventory,
+                type: newP.type,
+                sale: newP.sale,
+                attribute: newP.attribute,
                 timeCreate: firebase_1.Timestamp.fromDate(new Date()),
             };
             const response = yield firebase_1.db.collection('products').add(newProduct);
@@ -73,20 +90,9 @@ class ProductService {
     static updateProduct(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { name, detail, quantity, price, sold, inventory, weight, images, type } = req.body;
+            const { name, detail, type, price, weight, inventory, quantity, sale, attributes, images } = req.body;
             const productRef = firebase_1.db.collection('products').doc(id);
-            const response = yield productRef.update({
-                name: name,
-                detail: detail,
-                quantity: quantity,
-                price: price,
-                sold: sold,
-                inventory: inventory,
-                weight: weight,
-                images: images,
-                type: type,
-                timeUpdate: firebase_1.Timestamp.fromDate(new Date()),
-            });
+            const response = yield productRef.set(Object.assign(Object.assign({}, req.body), { timeUpdate: firebase_1.Timestamp.fromDate(new Date()) }));
             return response;
         });
     }
@@ -100,11 +106,26 @@ class ProductService {
                 .get(url)
                 .then((response) => {
                 res.header('Access-Control-Allow-Origin', '*');
-                return res.json(response.data.rows[0].elements[0].distance.value);
+                console.log(response.data);
+                return res.json(response.data && response.data.rows[0].elements[0].distance.value);
             })
                 .catch((e) => {
-                res.status(500).json({ error: 'Đã xảy ra lỗi', status: e });
+                res.status(500).json({ error: `Đã xảy ra lỗi ${e}` });
             });
+        });
+    }
+    static getExpiredProducts(date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const today = new Date();
+            const tenDaysLater = new Date(today);
+            tenDaysLater.setDate(today.getDate() + date);
+            const productsRef = firebase_1.db.collection('products');
+            const productData = yield productsRef.where('expiryDate', '>', today).where('expiryDate', '<=', tenDaysLater).get();
+            const response = productData.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
+                return Object.assign({ id: doc.id }, doc.data());
+            }));
+            const data = yield Promise.all(response);
+            return data;
         });
     }
 }

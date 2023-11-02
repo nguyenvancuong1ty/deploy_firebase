@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 const Billing = ({ product, total, setShowBilling }) => {
-    const [address, setAddress] = useState('');
+    const [address, setAddress] = useState(localStorage.getItem('address'));
     const [distance, setDistance] = useState(0);
     const [totalShippingCost, setTotalShippingCost] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -57,6 +57,7 @@ const Billing = ({ product, total, setShowBilling }) => {
             product.length > 0 && handleOrder();
         }
     };
+    console.log('product', product[0].ID);
     const handleOrder = () => {
         setLoading(true);
         const promises = product.map((element) => {
@@ -66,12 +67,19 @@ const Billing = ({ product, total, setShowBilling }) => {
                 shipping_address: address,
                 weight: element.product.weight * element.quantity,
                 shipping_cost: itemShippingCost,
-                total_amount: Math.floor(element.product.price * element.quantity + itemShippingCost),
+                total_amount: Math.floor(
+                    (element.product.price - (element.product.price * (element.product.sale.percent || 0)) / 100) *
+                        element.quantity +
+                        itemShippingCost,
+                ),
                 detail: {
+                    product_id: element.product.Id,
                     images: element.product.images,
                     name: element.product.name,
                     price: element.product.price,
                     quantity: element.quantity,
+                    modifier: element.modifier || {},
+                    sale: element.product.sale.percent || 0,
                 },
             };
             return axios({
@@ -148,17 +156,27 @@ const Billing = ({ product, total, setShowBilling }) => {
                 <tbody>
                     {product.map((item, index) => {
                         const itemShippingCost = getShipCost(item, distance);
+                        console.log(item);
                         return (
                             <tr key={index}>
                                 <td>
                                     <img alt="" src={item.product.images} className="images" />
                                 </td>
                                 <td>{item.product.name}</td>
-                                <td>{item.product.price}</td>
+                                <td>
+                                    {item.product.price - (item.product.price * item.product.sale.percent || 0) / 100}
+                                </td>
                                 <td>{item.quantity}</td>
                                 <td>{item.product.weight}</td>
                                 <td>{itemShippingCost}</td>
-                                <td>{Math.floor(item.product.price * item.quantity + itemShippingCost)}</td>
+                                <td>
+                                    {Math.floor(
+                                        (item.product.price -
+                                            (item.product.price * item.product.sale.percent || 0) / 100) *
+                                            item.quantity +
+                                            itemShippingCost,
+                                    )}
+                                </td>
                             </tr>
                         );
                     })}

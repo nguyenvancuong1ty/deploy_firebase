@@ -3,8 +3,9 @@ import { Timestamp, db } from '../db/firebase';
 import Account from '../models/model.account';
 import { Conflict, INTERNAL_SERVER_ERROR } from '../utils/response.error';
 import path from 'path';
-import { getAccessToken } from '../utils/auth2.0';
+// import { getAccessToken } from '../utils/auth2.0';
 import { mailDefine } from '../utils/mail.define';
+import { createToken } from '../utils/createToken';
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
@@ -30,13 +31,10 @@ const readFile = async (path: string) => {
 class AccountService {
     static async login(req: Request, res: Response): Promise<any> {
         const { email, password }: any = req.body;
-        console.log(email, password);
-
         const querySnapshot = await db.collection('account').where('username', '==', email).get();
-        const data: Array<Account> = [];
+        const data: Array<any> = [];
         querySnapshot.docs.map(async (doc: any) => {
             const account: Account = { Id: doc.id, ...doc.data() };
-
             data.push(account);
         });
         if (Array.isArray(data) && data.length > 0 && bcrypt.compareSync(password, data[0].password)) {
@@ -46,7 +44,7 @@ class AccountService {
             const refreshToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
                 expiresIn: '7d',
             });
-            res.cookie('refreshToken', refreshToken, { httpOnly: true });
+            res.cookie('refreshToken', accessToken, { httpOnly: true });
             return {
                 data: data[0],
                 accessToken: accessToken,
@@ -83,6 +81,18 @@ class AccountService {
         }
         res.cookie('refreshToken', refreshToken, { httpOnly: true });
         return { accessToken, address: data.address };
+    }
+
+    static async getAllAccount(req: Request, res: Response): Promise<any> {
+        const accountRef = db.collection('account');
+        const querySnapshot = await accountRef.get();
+        const response = querySnapshot.docs.map(async (doc: any) => {
+            const account: Account = { Id: doc.id, ...doc.data() };
+            return { ...account };
+        });
+        const data = await Promise.all(response);
+
+        return data;
     }
 
     static async create(req: Request, res: Response): Promise<any> {
@@ -128,28 +138,9 @@ class AccountService {
     }
 
     static async update(req: Request, res: Response): Promise<any> {
-        const { email, username, password } = req.body;
-        const querySnapshot = await db.collection('account').where('username', '==', email).get();
-        if (querySnapshot.docs[0]) {
-            return false;
-        } else {
-            const newAccount: Account = {
-                active: false,
-                address: '',
-                age: 0,
-                deleted: false,
-                fullName: '',
-                password: bcrypt.hashSync(password, 8),
-                salary: 0,
-                timeCreate: Timestamp.fromDate(new Date()),
-                type_account: 'customer',
-                username: email,
-            };
-            const response = await db.collection('account').update(newAccount);
-            console.log(response.id);
-
-            return response.id;
-        }
+        const { id } = req.params;
+        const response = await db.collection('account').doc(id).update(req.body);
+        return { Id: response.id };
     }
 
     static async changePassword(req: Request, res: Response): Promise<any> {
@@ -162,7 +153,6 @@ class AccountService {
                 .collection('account')
                 .doc(id)
                 .update({ password: bcrypt.hashSync(newPassword, 8) });
-            console.log(response);
             return response;
         } else {
             return false;
@@ -171,7 +161,6 @@ class AccountService {
 
     static async confirmCode(req: Request, res: Response): Promise<any> {
         const transporter = await mailDefine();
-        console.log('đi');
         const code: number = Math.floor((Math.random() + 1) * 10000);
         try {
             await db.runTransaction(async (transaction: any) => {
@@ -193,6 +182,7 @@ class AccountService {
                 }
                 const html = await readFile(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
                 const renderedHtml = ejs.render(html, { code: code });
+
                 await transporter.sendMail({
                     from: 'Email thank you',
                     to: [req.params.email], // list of receivers
@@ -206,7 +196,6 @@ class AccountService {
             });
             return true;
         } catch (error) {
-            console.log('E--', error);
             return false;
         }
     }
@@ -227,7 +216,6 @@ class AccountService {
                 })
                 .then(async (res: any) => {
                     const account = await db.collection('account').where('email', '==', req.params.email).get();
-                    console.log(account && account.docs[0].id);
 
                     account &&
                         (await db

@@ -3,6 +3,18 @@ import { Timestamp, db, messaging } from '../db/firebase';
 import Order from '../models/model.order';
 
 class OrderService {
+    static async getAllOrder(req: Request, res: Response): Promise<Array<Order | any>> {
+        const { type } = req.query;
+        const orderRef = db.collection('order');
+        const querySnapshot = await orderRef.where('status', '==', type).get();
+
+        const response = querySnapshot.docs.map((item: any) => {
+            return { ...item.data(), Id: item.id };
+        });
+        const data = await Promise.all(response);
+        return data;
+    }
+
     static async getOrder(req: Request, res: Response): Promise<Array<Order | any>> {
         const { id, type } = req.query;
         const orderRef = db.collection('order');
@@ -20,7 +32,6 @@ class OrderService {
 
         return response;
     }
-
     static async getNewOrder(req: Request, res: Response): Promise<Array<Order | any>> {
         const productsRef = db.collection('order');
         const querySnapshot = await productsRef.where('status', '==', 'pending').where('deleted', '==', false).get();
@@ -96,7 +107,7 @@ class OrderService {
                 await docRef.update({
                     id_user_shipper,
                     status,
-                    start_shipping_date: Timestamp.fromDate(new Date()),
+                    start_shipping_date: Timestamp.fromDate(new Date()),    
                 });
                 return true;
             }
@@ -119,36 +130,115 @@ class OrderService {
     static async notifyForOrder(req: Request, res: Response) {
         if (req.body.status === 'shipping') {
             const message: object = {
-                notification: {
+                data: {
                     title: 'Giao hàng',
                     body: `Đơn hàng ${req.body.id} đã có người nhận giao...`,
+                    icon: 'https://raw.githubusercontent.com/nguyenvancuong1ty/imagas/main/ba.png',
                 },
                 token: req.body.token,
+
+                webpush: {
+                    headers: {
+                        TTL: '86400',
+                    },
+                    fcmOptions: {
+                        link: 'https://www.facebook.com/profile.php?id=100093651007165',
+                    },
+                },
             };
 
-            messaging.send(message);
+            const messageSend = await messaging.send(message);
+            const notifyQuery = db.collection('notify');
+            const querySnapshot = await notifyQuery.add({
+                deleted: false,
+                description: `Đơn hàng ${req.body.id} đã có người nhận giao...`,
+                icon: 'www',
+                isAll: false,
+                isRead: false,
+                link: 'string',
+                time: Timestamp.fromDate(new Date()),
+                title: 'Giao hàng',
+                user_id: [req.body.user_order_id],
+            });
+            await Promise.all([messageSend, querySnapshot])
+                .then(() => {
+                    return true;
+                })
+                .catch(() => {
+                    return false;
+                });
+            return true;
         } else if (req.body.status === 'pending') {
             const message: object = {
-                notification: {
+                data: {
                     title: 'Hủy hàng',
                     body: `shipper đã hủy giao đơn hàng ${req.body.id}`,
                 },
                 token: req.body.token,
+                webpush: {
+                    headers: {
+                        TTL: '86400',
+                    },
+                },
             };
 
-            messaging.send(message);
+            const messageSend = await messaging.send(message);
+            const notifyQuery = db.collection('notify');
+            const querySnapshot = await notifyQuery.add({
+                deleted: false,
+                description: `shipper đã hủy giao đơn hàng ${req.body.id}`,
+                icon: 'www',
+                isAll: false,
+                isRead: false,
+                link: 'string',
+                time: Timestamp.fromDate(new Date()),
+                title: 'Hủy hàng',
+                user_id: [req.body.user_order_id],
+            });
+            await Promise.all([messageSend, querySnapshot])
+                .then(() => {
+                    return true;
+                })
+                .catch(() => {
+                    return false;
+                });
+            return true;
         } else {
             const message: object = {
-                notification: {
+                data: {
                     title: 'Nhận hàng',
                     body: `Đơn hàng  ${req.body.id} sắp đến hãy chuẩn bị nhận.`,
                 },
                 token: req.body.token,
+                webpush: {
+                    headers: {
+                        TTL: '86400',
+                    },
+                },
             };
 
-            messaging.send(message);
+            const messageSend = await messaging.send(message);
+            const notifyQuery = db.collection('notify');
+            const querySnapshot = await notifyQuery.add({
+                deleted: false,
+                description: `Đơn hàng  ${req.body.id} sắp đến hãy chuẩn bị nhận.`,
+                icon: 'www',
+                isAll: false,
+                isRead: false,
+                link: 'string',
+                time: Timestamp.fromDate(new Date()),
+                title: 'Nhận hàng',
+                user_id: [req.body.user_order_id],
+            });
+            await Promise.all([messageSend, querySnapshot])
+                .then(() => {
+                    return true;
+                })
+                .catch(() => {
+                    return false;
+                });
+            return true;
         }
-        return true;
     }
 }
 

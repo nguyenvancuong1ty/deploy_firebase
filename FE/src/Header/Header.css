@@ -5,6 +5,11 @@ a {
     text-decoration: none;
     color: white;
 }
+
+a:hover {
+    color: white;
+    cursor: pointer;
+}
 ul {
     list-style: none;
 }
@@ -125,6 +130,7 @@ b {
 .header__opstion--item {
     text-align: center;
     padding: 8px;
+    cursor: pointer;
 }
 
 .header__opstion--link {
@@ -225,5 +231,45 @@ b {
     }
     .change .opstion--icon:last-child {
         transform: translate(0, -11px) rotate(45deg);
+    }
+}
+
+.menu__options {
+    position: fixed;
+}
+
+.unread__notify {
+    background: #cdcdcd;
+}
+
+.header__opstion--img.notify__icon {
+    animation: regNotify 1s linear infinite;
+    color: #bc2601;
+}
+
+@keyframes regNotify {
+    0% {
+        transform: rotate(22deg);
+    }
+    10% {
+        transform: rotate(-22deg);
+    }
+    20% {
+        transform: rotate(22deg);
+    }
+    30% {
+        transform: rotate(-22deg);
+    }
+    40% {
+        transform: rotate(22deg);
+    }
+    50% {
+        transform: rotate(-22deg);
+    }
+    60% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }

@@ -12,11 +12,12 @@ const productController = new ProductController();
 //Middleware check permission
 
 //routes
-productRouter.get('/product?', cache, handleError(productController.getProduct));
-productRouter.get('/product/search', cache, handleError(productController.getAllProduct));
-productRouter.post('/product', authentication, authorization('admin'), handleError(productController.addProduct));
-productRouter.patch('/product/:id', authentication, handleError(productController.deleteProduct));
-productRouter.put('/product/:id', authentication, authorization('admin'), handleError(productController.updateProduct));
+productRouter.get('/product', handleError(productController.getProduct));
+productRouter.get('/product/search', handleError(productController.getAllProduct));
 productRouter.get('/product/distance', handleError(productController.distance));
+productRouter.get('/product/:id', handleError(productController.getProductById));
+productRouter.post('/product', authentication, authorization('admin'), handleError(productController.addProduct));
+productRouter.patch('/product/delete/:id', authentication, handleError(productController.deleteProduct));
+productRouter.put('/product/:id', authorization('admin'), handleError(productController.updateProduct));
 
 export default productRouter;

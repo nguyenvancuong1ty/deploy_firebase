@@ -62,7 +62,7 @@ function Register({ setShow, setUid, setShowRegister }) {
                 onClick={(e) => {
                     e.stopPropagation();
                 }}
-                style={{ position: 'relative', minHeight: '60vh' }}
+                style={{ position: 'relative', minHeight: '67vh' }}
             >
                 <Form
                     form={form}
