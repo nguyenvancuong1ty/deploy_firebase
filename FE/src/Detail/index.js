@@ -94,7 +94,6 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                     },
                 },
             );
-            console.log(res);
             if (res.data.metadata.result) {
                 console.log(quantityAddToCart);
                 dispatch(setCurrent(number + quantityAddToCart));
@@ -339,10 +338,12 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                         </Col>
                     </Row>
                     <hr />
-                    <Row lg={2} md={2} sm={2} xl={2} xs={2} className="detail_component">
-                        {data[0].data.metadata.detail.split('.').map((item, index) => {
-                            return <p key={index}>- {item}</p>;
-                        })}
+                    <Row lg={1} md={1} sm={1} xl={1} xs={1} className="detail_component">
+                        <Col>
+                            {data[0].data.metadata.detail.split('.').map((item, index) => {
+                                return <p key={index}>- {item}</p>;
+                            })}
+                        </Col>
                     </Row>
 
                     <ToastContainer />

@@ -801,4 +801,4 @@ const addFieldAccount = async () => {
 
     await Promise.all(promises);
 };
-addFieldAccount();
+update();

@@ -1,8 +1,8 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Homepage';
-
-import { useState } from 'react';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
 import OrderPage from './Orderpage';
 import LoginCpn from './LoginCpn';
 import NotificationComponent from './Notification';
@@ -14,8 +14,24 @@ import NotFoundPage from './NotfoundPage';
 function App() {
     const [show, setShow] = useState(false);
     const [showCart, setShowCart] = useState(false);
-    const [showListNotify, setShowListNotify] = useState(false);
     const [uid, setUid] = useState(localStorage.getItem('uid'));
+    const [refreshToken, setRefreshToken] = useState(null);
+    const [authData, setAuthData] = useState(null);
+
+    useEffect(() => {
+        // Lấy giá trị cookies
+        const refreshToken = Cookies.get('refreshToken');
+        const authData = Cookies.get('auth');
+        // Lưu trữ giá trị cookies vào state
+        if (refreshToken) {
+            setRefreshToken(refreshToken);
+        }
+
+        if (authData) {
+            setAuthData(authData);
+        }
+    }, [refreshToken, authData]);
+    console.log(JSON.parse(authData));
     return (
         <Router>
             <div className="App" onClick={() => setShowCart(false)}>

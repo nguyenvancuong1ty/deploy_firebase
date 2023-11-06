@@ -90,9 +90,9 @@ class ProductService {
     static updateProduct(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { name, detail, type, price, weight, inventory, quantity, sale, attributes, images } = req.body;
             const productRef = firebase_1.db.collection('products').doc(id);
-            const response = yield productRef.set(Object.assign(Object.assign({}, req.body), { timeUpdate: firebase_1.Timestamp.fromDate(new Date()) }));
+            console.log(req.body);
+            const response = yield productRef.set(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
             return response;
         });
     }
@@ -117,10 +117,10 @@ class ProductService {
     static getExpiredProducts(date) {
         return __awaiter(this, void 0, void 0, function* () {
             const today = new Date();
-            const tenDaysLater = new Date(today);
-            tenDaysLater.setDate(today.getDate() + date);
+            const dayLater = new Date(today);
+            dayLater.setDate(today.getDate() + date);
             const productsRef = firebase_1.db.collection('products');
-            const productData = yield productsRef.where('expiryDate', '>', today).where('expiryDate', '<=', tenDaysLater).get();
+            const productData = yield productsRef.where('expiryDate', '<=', dayLater).get();
             const response = productData.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
                 return Object.assign({ id: doc.id }, doc.data());
             }));

@@ -101,6 +101,12 @@ select {
     z-index: 10000000 !important;
 }
 
+.ant-image-preview-root .ant-image-preview-img {
+    max-width: 60%;
+    max-height: 60%;
+    min-height: 60%;
+}
+
 .detail__info--number--btn {
     height: 28px;
     border: 1px solid rgb(118, 118, 118);

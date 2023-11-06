@@ -52,12 +52,13 @@ class AccountService {
             }));
             if (Array.isArray(data) && data.length > 0 && bcrypt.compareSync(password, data[0].password)) {
                 const accessToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
-                    expiresIn: '2d',
+                    expiresIn: '3d',
                 });
                 const refreshToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
                     expiresIn: '7d',
                 });
-                res.cookie('refreshToken', accessToken, { httpOnly: true });
+                res.cookie('refreshToken', refreshToken);
+                res.cookie('auth', JSON.stringify(data[0]));
                 return {
                     data: data[0],
                     accessToken: accessToken,
@@ -83,19 +84,29 @@ class AccountService {
                 salary: 0,
                 timeCreate: firebase_1.Timestamp.fromDate(new Date()),
             };
-            const accessToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
-                expiresIn: '2d',
-            });
-            const refreshToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
-                expiresIn: '7d',
-            });
             const accountRef = firebase_1.db.collection('account').doc(uid);
             const doc = yield accountRef.get();
+            let accessToken = '';
+            let refreshToken = '';
             if (!doc.exists) {
                 yield firebase_1.db.collection('account').doc(uid).set(data);
+                accessToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                    expiresIn: '2d',
+                });
+                refreshToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                    expiresIn: '7d',
+                });
+            }
+            else {
+                accessToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                    expiresIn: '2d',
+                });
+                refreshToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                    expiresIn: '7d',
+                });
             }
             res.cookie('refreshToken', refreshToken, { httpOnly: true });
-            return { accessToken, address: data.address };
+            return { accessToken: accessToken, data: doc.data() };
         });
     }
     static getAllAccount(req, res) {

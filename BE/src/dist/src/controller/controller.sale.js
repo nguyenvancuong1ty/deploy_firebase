@@ -8,26 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const firebase_1 = require("../db/firebase");
-class SaleService {
-    static getSale(id) {
+const service_sale_1 = __importDefault(require("../service/service.sale")); // Import your SaleService
+const cache_1 = require("../middleware/cache");
+const response_success_1 = require("../utils/response.success");
+class SaleController {
+    getAllSale(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const saleRef = firebase_1.db.collection('Sale').doc(id);
-            const doc = yield saleRef.get();
-            const response = Object.assign({ id: doc.id }, doc.data());
-            return response;
-        });
-    }
-    static getAllSale() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const saleRef = firebase_1.db.collection('Sale');
-            const docs = yield saleRef.get();
-            const response = yield docs.docs.map((doc) => {
-                return Object.assign({ id: doc.id }, doc.data());
-            });
-            return yield Promise.all(response);
+            const data = yield service_sale_1.default.getAllSale();
+            (0, cache_1.saveDataToCache)(req, data);
+            return new response_success_1.OK(data).send(res);
         });
     }
 }
-exports.default = SaleService;
+exports.default = SaleController;

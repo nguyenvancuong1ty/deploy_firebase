@@ -77,9 +77,9 @@ class ProductService {
 
     static async updateProduct(req: Request): Promise<object> {
         const { id } = req.params;
-        const { name, detail, type, price, weight, inventory, quantity, sale, attributes, images } = req.body;
         const productRef = db.collection('products').doc(id);
-        const response = await productRef.set({ ...req.body, timeUpdate: Timestamp.fromDate(new Date()) });
+        console.log(req.body);
+        const response = await productRef.set({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
         return response;
     }
 
@@ -103,10 +103,10 @@ class ProductService {
 
     static async getExpiredProducts(date: number): Promise<Array<object>> {
         const today = new Date();
-        const tenDaysLater = new Date(today);
-        tenDaysLater.setDate(today.getDate() + date);
+        const dayLater = new Date(today);
+        dayLater.setDate(today.getDate() + date);
         const productsRef = db.collection('products');
-        const productData = await productsRef.where('expiryDate', '>', today).where('expiryDate', '<=', tenDaysLater).get();
+        const productData = await productsRef.where('expiryDate', '<=', dayLater).get();
         const response = productData.docs.map(async (doc: any) => {
             return {
                 id: doc.id,
@@ -117,5 +117,4 @@ class ProductService {
         return data;
     }
 }
-
 export default ProductService;

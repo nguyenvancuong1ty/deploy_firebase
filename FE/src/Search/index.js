@@ -32,7 +32,7 @@ function Search() {
             })
                 .then((res) => {
                     const newData = res.data.metadata.filter((item) => {
-                        return item.name.toLowerCase().includes(textInput.replace(/\s/g, '').toLowerCase());
+                        return item.name.toLowerCase().includes(textInput.replace(/\s/g, ' ').toLowerCase());
                     });
                     setData(newData);
                     setTimeout(() => {

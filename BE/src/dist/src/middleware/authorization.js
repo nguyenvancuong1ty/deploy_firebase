@@ -9,6 +9,7 @@ const authorization = (authority) => (req, res, next) => {
         return new response_error_1.UnAuthorized('Missing token. Authorization denied.').send(res);
     }
     jwt.verify(token, process.env.SECRET, function (err, decoded) {
+        console.log(decoded);
         if (decoded) {
             if (authority.includes(decoded.role)) {
                 next();

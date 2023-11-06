@@ -15,6 +15,7 @@ import { CronJob } from 'cron'; // package lập lịch
 import NotifyService from './src/service/service.notify';
 import ProductService from './src/service/service.product';
 import { Timestamp, db } from './src/db/firebase';
+import saleRouter from './src/routes/route.sale';
 const app = express();
 const port = process.env.PORT;
 
@@ -42,6 +43,7 @@ app.use('/', productRouter);
 app.use('/', cartRouter);
 app.use('/', orderRouter);
 app.use('/', notifyRouter);
+app.use('/', saleRouter);
 
 app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'ejs');
@@ -55,11 +57,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 const job = new CronJob(
-    '0 47 20 * * *', // cronTime
+    '15 47 21 * * *', // cronTime
     async function () {
         const data = await ProductService.getExpiredProducts(10);
         if (Array.isArray(data) && data.length > 0) {
-            const expiredProduct = data.map((item: any) => {
+            const expiredProduct: any = data.map((item: any) => {
                 return `${item.name}[${item.id}]`;
             });
             const notify = {
@@ -102,5 +104,5 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`.toUpperCase());
+    console.log(`Server running on port  ${port}`.toUpperCase());
 });

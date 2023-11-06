@@ -28,7 +28,6 @@ function Header(props) {
     const isLogin = useSelector((state) => state.AuthReducer.Auth);
     const uid = localStorage.getItem('uid');
     const [showListNotify, setShowListNotify] = useState(false);
-
     const [loading, setLoading] = useState(true);
     const [notifyData, setNotifyData] = useState([]);
     useEffect(() => {
@@ -42,7 +41,7 @@ function Header(props) {
                 theme: 'light',
             });
         });
-    });
+    }, []);
     useEffect(() => {
         const handleClick = () => {
             showListNotify && setShowListNotify(false);
@@ -68,25 +67,27 @@ function Header(props) {
         const queryRefAll = query(notifyRef, where('isAll', '==', true), where('deleted', '==', false));
 
         const unsubscribe = onSnapshot(queryRef, (snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const newNotify = change.doc.data();
-                    localStorage.getItem('uid') &&
-                        setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                }
-            });
+            isLogin &&
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const newNotify = change.doc.data();
+                        localStorage.getItem('uid') &&
+                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
+                    }
+                });
 
             setLoading(false);
         });
 
         const unsubscribeAll = onSnapshot(queryRefAll, (snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const newNotify = change.doc.data();
-                    localStorage.getItem('uid') &&
-                        setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                }
-            });
+            isLogin &&
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const newNotify = change.doc.data();
+                        localStorage.getItem('uid') &&
+                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
+                    }
+                });
 
             setLoading(false);
         });
@@ -148,6 +149,7 @@ function Header(props) {
                 dispatch(setNumberNotify(0));
                 dispatch(setAuth({}));
                 props.setUid(null);
+                setNotifyData([]);
                 toast.success('Đăng xuất thành công', {
                     position: 'bottom-left',
                     autoClose: 2000,

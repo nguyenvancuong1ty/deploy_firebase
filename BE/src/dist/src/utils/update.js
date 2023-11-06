@@ -798,4 +798,4 @@ const addFieldAccount = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     yield Promise.all(promises);
 });
-addFieldAccount();
+update();

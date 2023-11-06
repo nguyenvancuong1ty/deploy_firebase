@@ -9,6 +9,7 @@ export const authorization = (authority: any) => (req: Request | any, res: Respo
     }
 
     jwt.verify(token, process.env.SECRET, function (err: Error, decoded: any) {
+        console.log(decoded);
         if (decoded) {
             if (authority.includes(decoded.role)) {
                 next();
