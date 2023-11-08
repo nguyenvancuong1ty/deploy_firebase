@@ -4,7 +4,7 @@ import { Checkbox, Empty, Modal, message } from 'antd';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Billing from '~/component/Billing';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrent, setDataCart, setTotalCoin } from '~/redux';
 import LoadingAntd from '~/Loading/Loading.antd';
@@ -70,24 +70,6 @@ function Cart({ dataCart, number }) {
             });
             setCheckOut(newItem);
         }
-        // try {
-        //     const res = await axios({
-        //         url: `${process.env.REACT_APP_API_URL}/cart/${localStorage.getItem('uid')}`,
-        //         method: 'get',
-        //         headers: {
-        //             Authorization: `Bearer ${localStorage.getItem('token')}`,
-        //         },
-        //     });
-        //     console.log(res);
-        //     const newData =
-        //         res.data &&
-        //         res.data.metadata.sort((a, b) => {
-        //             return a.product.price - b.product.price;
-        //         });
-        //     dispatch(setDataCart(newData));
-        // } catch (error) {
-        //     alert(error.message);
-        // }
     };
     useEffect(() => {
         const total =
@@ -163,7 +145,6 @@ function Cart({ dataCart, number }) {
                         {showBilling && (
                             <Billing product={checkOut} total={totalCoin} setShowBilling={setShowBilling} />
                         )}
-                        {/* <ToastContainer autoClose={1000} /> */}
                     </>
                 ) : (
                     <Empty />

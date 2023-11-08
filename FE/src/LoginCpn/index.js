@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import LoadingAntd from '~/Loading/Loading.antd';
 import LoginFacebook from '~/LoginFacebook';
 import LoginGithub from '~/LoginGithub';
@@ -147,18 +147,6 @@ const LoginCpn = ({ setShow, setUid }) => {
                     <Register setShow={setShow} setUid={setUid} setShowRegister={setShowRegister}></Register>
                 )}
                 {loading && <LoadingAntd />}
-                <ToastContainer
-                    position="top-center"
-                    autoClose={1000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
             </div>
         </Container>
     );

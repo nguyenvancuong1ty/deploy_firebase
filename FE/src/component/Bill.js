@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, DatePicker, Empty, Modal, Space, Spin } from 'antd';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import axios from 'axios';
 const { RangePicker } = DatePicker;
@@ -277,8 +277,6 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                     </Spin>
                 </Space>
             )}
-
-            <ToastContainer autoClose={1000} />
         </div>
     );
 };

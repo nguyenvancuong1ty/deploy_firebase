@@ -56,23 +56,7 @@ class ProductService {
     }
     static addAProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newP = Object.assign({}, req.body);
-            const newProduct = {
-                sold: newP.sold,
-                images: newP.images,
-                quantity: newP.quantity,
-                deleted: newP.false,
-                price: newP.price,
-                name: newP.name,
-                weight: newP.weight,
-                detail: newP.detail,
-                inventory: newP.inventory,
-                type: newP.type,
-                sale: newP.sale,
-                attribute: newP.attribute,
-                timeCreate: firebase_1.Timestamp.fromDate(new Date()),
-            };
-            const response = yield firebase_1.db.collection('products').add(newProduct);
+            const response = yield firebase_1.db.collection('products').add(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
             return response;
         });
     }

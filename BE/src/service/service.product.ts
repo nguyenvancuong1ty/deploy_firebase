@@ -45,23 +45,7 @@ class ProductService {
     }
 
     static async addAProduct(req: Request, res: Response): Promise<Product> {
-        const newP = { ...req.body };
-        const newProduct: Product = {
-            sold: newP.sold,
-            images: newP.images,
-            quantity: newP.quantity,
-            deleted: newP.false,
-            price: newP.price,
-            name: newP.name,
-            weight: newP.weight,
-            detail: newP.detail,
-            inventory: newP.inventory,
-            type: newP.type,
-            sale: newP.sale,
-            attribute: newP.attribute,
-            timeCreate: Timestamp.fromDate(new Date()),
-        };
-        const response = await db.collection('products').add(newProduct);
+        const response = await db.collection('products').add({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
         return response;
     }
 

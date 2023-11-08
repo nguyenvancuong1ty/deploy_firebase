@@ -4,7 +4,7 @@ import { messaging } from '~/firebase';
 import { db } from '~/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 function NotificationComponent() {
     const [token, setToken] = useState('');
@@ -128,11 +128,7 @@ function NotificationComponent() {
 
         return () => unsubscribe();
     }, [token]);
-    return (
-        <>
-            <ToastContainer />
-        </>
-    );
+    return <></>;
 }
 
 export default NotificationComponent;

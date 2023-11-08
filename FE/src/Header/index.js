@@ -10,101 +10,17 @@ import { Modal } from 'antd';
 import Cart from '~/Cart';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
-import Notify from '~/component/Notify';
-
-import { db, messaging } from '~/firebase';
-import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import { onMessage } from 'firebase/messaging';
+import NotifyComponent from '~/component/NotifyComponent';
 
 const { confirm } = Modal;
 function Header(props) {
     const dispatch = useDispatch();
     const number = useSelector((state) => state.numberReducer.number);
-    const numberNotify = useSelector((state) => state.numberNotifyReduce.numberNotify);
     const dataCart = useSelector((state) => state.dataCartReducer.dataCart);
-    const isLogin = useSelector((state) => state.AuthReducer.Auth);
     const uid = localStorage.getItem('uid');
-    const [showListNotify, setShowListNotify] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [notifyData, setNotifyData] = useState([]);
-    useEffect(() => {
-        onMessage(messaging, (payload) => {
-            console.log(payload);
-            toast.info('Bạn có 1 thông báo mới', {
-                position: 'bottom-left',
-                autoClose: 4000,
-                hideProgressBar: false,
-                progress: undefined,
-                theme: 'light',
-            });
-        });
-    }, []);
-    useEffect(() => {
-        const handleClick = () => {
-            showListNotify && setShowListNotify(false);
-        };
 
-        window.addEventListener('click', handleClick);
-
-        return () => {
-            window.removeEventListener('click', handleClick);
-        };
-    }, [showListNotify]);
-
-    useEffect(() => {
-        setLoading(true);
-        const notifyRef = collection(db, 'notify');
-        const queryRef = query(
-            notifyRef,
-            where('user_id', '==', [localStorage.getItem('uid')]),
-            where('deleted', '==', false),
-            orderBy('time', 'desc'),
-        );
-
-        const queryRefAll = query(notifyRef, where('isAll', '==', true), where('deleted', '==', false));
-
-        const unsubscribe = onSnapshot(queryRef, (snapshot) => {
-            isLogin &&
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const newNotify = change.doc.data();
-                        localStorage.getItem('uid') &&
-                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                    }
-                });
-
-            setLoading(false);
-        });
-
-        const unsubscribeAll = onSnapshot(queryRefAll, (snapshot) => {
-            isLogin &&
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const newNotify = change.doc.data();
-                        localStorage.getItem('uid') &&
-                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                    }
-                });
-
-            setLoading(false);
-        });
-
-        return () => {
-            unsubscribe();
-            unsubscribeAll();
-        };
-    }, [isLogin]);
-    useEffect(() => {
-        const newData =
-            notifyData.length > 0 &&
-            notifyData.filter((item) => {
-                return !item.isRead || !item.user_id.includes(localStorage.getItem('uid'));
-            });
-        dispatch(setNumberNotify(newData.length));
-    }, [notifyData]);
     let number_product =
         Array.isArray(dataCart) && dataCart.length > 0
             ? dataCart.reduce((init, item) => {
@@ -200,28 +116,7 @@ function Header(props) {
                                     <p className="header__opstion--title">Đơn hàng</p>
                                 </NavLink>
                             </li>
-                            <li
-                                className="shop header__opstion--item"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowListNotify(true);
-                                }}
-                            >
-                                <div className="header__opstion--link">
-                                    <FontAwesomeIcon
-                                        icon={faBell}
-                                        className={`header__opstion--img ${numberNotify > 0 && 'notify__icon'}`}
-                                        size="xl"
-                                    />
-                                    <p className="header__opstion--title">Thông báo</p>{' '}
-                                    {numberNotify > 0 && (
-                                        <div className="number__product">
-                                            <span className="number">{numberNotify}</span>
-                                        </div>
-                                    )}
-                                    {showListNotify && <Notify loading={loading} notifyData={notifyData} />}
-                                </div>
-                            </li>
+                            <NotifyComponent />
                             <li className="header__opstion--item account">
                                 {uid ? (
                                     <>

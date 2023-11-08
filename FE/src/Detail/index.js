@@ -4,7 +4,7 @@ import LoadingAntd from '~/Loading/Loading.antd';
 import useAxios from '~/useAxios';
 import './Detail.css';
 import { setCurrent } from '~/redux';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '~/config/axios';
 import { Image, Modal } from 'antd';
@@ -340,13 +340,12 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                     <hr />
                     <Row lg={1} md={1} sm={1} xl={1} xs={1} className="detail_component">
                         <Col>
-                            {data[0].data.metadata.detail.split('.').map((item, index) => {
-                                return <p key={index}>- {item}</p>;
-                            })}
+                            {data[0].data.metadata.detail &&
+                                data[0].data.metadata.detail.split('.').map((item, index) => {
+                                    return <p key={index}>- {item}</p>;
+                                })}
                         </Col>
                     </Row>
-
-                    <ToastContainer />
                 </Container>
             )}
             {show && <LoginCpn setShow={setShow} setUid={setUid} />}

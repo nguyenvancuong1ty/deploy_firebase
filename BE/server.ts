@@ -57,7 +57,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 const job = new CronJob(
-    '15 47 21 * * *', // cronTime
+    '18 29 16 * * *', // cronTime
     async function () {
         const data = await ProductService.getExpiredProducts(10);
         if (Array.isArray(data) && data.length > 0) {

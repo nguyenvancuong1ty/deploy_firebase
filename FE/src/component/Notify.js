@@ -22,7 +22,6 @@ function Notify({ loading, notifyData }) {
                                 Đánh dấu tất cả đã đọc
                             </button>
                         </footer>
-                        {/* <ToastContainer autoClose={1000} /> */}
                     </>
                 ) : (
                     <Empty />

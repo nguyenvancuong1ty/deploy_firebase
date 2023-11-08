@@ -128,6 +128,7 @@ b {
 }
 
 .header__opstion--item {
+    list-style: none;
     text-align: center;
     padding: 8px;
     cursor: pointer;

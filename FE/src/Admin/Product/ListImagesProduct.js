@@ -8,9 +8,10 @@ function ListImagesProduct({ images, productDetail, setProductDetail }) {
             return item !== image;
         });
         setProductDetail((prev) => {
+            const image = 'image';
             return {
                 ...prev,
-                ['image']: newListImage,
+                [image]: newListImage,
             };
         });
     };
@@ -20,7 +21,7 @@ function ListImagesProduct({ images, productDetail, setProductDetail }) {
                 images.map((item) => {
                     return (
                         <div className="product__list--img" key={item}>
-                            <img src={item} className="product__list--img--item" />
+                            <img alt="" src={item} className="product__list--img--item" />
                             <FontAwesomeIcon
                                 icon={faCircleMinus}
                                 style={{ color: '#eb0000' }}

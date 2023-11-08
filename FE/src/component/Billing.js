@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input, Modal, Space, Spin, Tooltip } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const Billing = ({ product, total, setShowBilling }) => {
     const [address, setAddress] = useState(localStorage.getItem('address'));
@@ -229,7 +229,6 @@ const Billing = ({ product, total, setShowBilling }) => {
                 <p>Đơn hàng từ từ 5kg - 10kg (5000đ / 1km)</p>
                 <p>Đơn hàng từ trên 10kg (6000đ / 1km)</p>
             </Modal>
-            <ToastContainer autoClose={1000} />
         </div>
     );
 };

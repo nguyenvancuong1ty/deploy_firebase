@@ -1,13 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Admin.css';
 import { faBars, faBell, faGauge, faHouse, faUsers, faWarehouse } from '@fortawesome/free-solid-svg-icons';
-import { NavLink, Navigate, Route, Router, Routes } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import ProductPage from './Product';
 import AccountPage from './Account';
 import DashboardPage from './Dashboard';
 import axios from 'axios';
 import NotifyPage from './Notify';
+
+import NotifyComponent from '~/component/NotifyComponent';
+import { LogoutOutlined } from '@ant-design/icons';
 const nav = [
     {
         title: 'Home',
@@ -105,6 +108,7 @@ function Admin() {
         };
         fetchData();
     }, []);
+
     return (
         <div className="admin__body">
             <section className={`admin__nav ${showNav ? '' : 'admin__show'}`} ref={navRef}>
@@ -125,11 +129,16 @@ function Admin() {
 
             <section className={`admin__content ${showNav ? '' : 'full__width'}`}>
                 <div className={`admin__content--header ${showNav ? '' : 'header__fullwidth'}`}>
-                    {' '}
-                    <FontAwesomeIcon icon={faBars} size="2xl" onClick={handleToggleNav} className="toggle__navbar" />
-                    <div>
-                        <img alt="avatar" src="/avatar.jpg" className="admin__content--header--avatar" />
-                        <span>admin</span>
+                    <FontAwesomeIcon
+                        icon={faBars}
+                        size="2xl"
+                        onClick={handleToggleNav}
+                        className="toggle__navbar"
+                        style={{ color: '#fff' }}
+                    />
+                    <div className="admin__content--header--left">
+                        <NotifyComponent page="admin" />
+                        <LogoutOutlined style={{ fontSize: 30, color: '#fff' }} />
                     </div>
                 </div>
                 <section style={{ height: 150 }}></section>
