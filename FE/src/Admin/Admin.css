@@ -4,6 +4,13 @@
     /* height: 100vh; */
 }
 
+.admin__nav .active {
+    background: #0bff2b;
+    display: block;
+    color: black;
+    font-weight: bold;
+}
+
 .admin__nav {
     width: 300px;
     position: fixed;
@@ -81,10 +88,16 @@
 
 .admin__content--header--left {
     display: flex;
+    align-items: flex-end;
+}
+
+.admin__content--header--text {
+    color: white;
+    margin: 0;
 }
 
 .admin__content--header--avatar {
-    width: 50px;
+    width: 40px;
     border-radius: 50%;
 }
 
@@ -166,7 +179,8 @@
     width: 100%;
 }
 .product__detail--item b {
-    min-width: 50px;
+    min-width: 110px;
+    display: inline-block;
 }
 .product__detail--item input {
     border: none;

@@ -112,9 +112,9 @@ class AccountService {
     static getAllAccount(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const accountRef = firebase_1.db.collection('account');
-            const querySnapshot = yield accountRef.get();
+            const querySnapshot = yield accountRef.where('deleted', '==', false).get();
             const response = querySnapshot.docs.map((doc) => __awaiter(this, void 0, void 0, function* () {
-                const account = Object.assign({ Id: doc.id }, doc.data());
+                const account = Object.assign(Object.assign({ Id: doc.id }, doc.data()), { timeCreate: doc.data().timeCreate.toMillis() });
                 return Object.assign({}, account);
             }));
             const data = yield Promise.all(response);

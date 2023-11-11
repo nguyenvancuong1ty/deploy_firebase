@@ -36,6 +36,7 @@ const LoginGoogle = ({ setShow, setUid }) => {
             localStorage.setItem('account', ok.data.metadata.data.type_account);
             dispatch(setCurrent(number));
             dispatch(setAuth({ ...ok.data.metadata.data }));
+            sessionStorage.setItem('reduxAuthState', JSON.stringify(ok.data.metadata.data));
             setShow(false);
             console.log(ok.data.metadata.data.type_account);
             ok.data.metadata.data.type_account === 'admin' && navigate('/admin/');

@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 function TimeNotify({ time }) {
     const [timer, setTimer] = useState('');
     const formatTimeDifference = (timestamp) => {
-        const currentTime = new Date();
-        const targetTime = new Date(timestamp * 1000);
+        const currentTime = new Date().getTime();
 
-        const timeDifference = Math.floor((currentTime - targetTime) / 1000);
+        const timeDifference = Math.floor(currentTime - timestamp)/1000;
 
         if (timeDifference < 60) {
             return 'Vừa xong';
@@ -23,12 +22,12 @@ function TimeNotify({ time }) {
 
     useEffect(() => {
         const updateTimer = () => {
-            setTimer(formatTimeDifference(time.seconds));
+            setTimer(formatTimeDifference(time));
             setTimeout(updateTimer, 60000); // Gọi lại hàm sau 1 giây
         };
 
         updateTimer(); // Bắt đầu đệ quy
-    }, [time.seconds]);
+    }, [time]);
     return <div>{timer}</div>;
 }
 

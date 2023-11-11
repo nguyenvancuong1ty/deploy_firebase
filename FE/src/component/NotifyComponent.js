@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../Header/Header.css';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { setNumberNotify } from '~/redux';
+import { setNotifyData, setNumberNotify } from '~/redux';
 
 function NotifyComponent({ page }) {
+    const notifyData = useSelector((state) => state.dataNotifyReduce.notifyData);
     const numberNotify = useSelector((state) => state.numberNotifyReduce.numberNotify);
     const [loading, setLoading] = useState(true);
     const [showListNotify, setShowListNotify] = useState(false);
-    const [notifyData, setNotifyData] = useState([]);
     const isLogin = useSelector((state) => state.AuthReducer.Auth);
     const dispatch = useDispatch();
     useEffect(() => {
@@ -27,6 +27,7 @@ function NotifyComponent({ page }) {
         };
     }, [showListNotify]);
     useEffect(() => {
+        if (!isLogin) return;
         setLoading(true);
         const notifyRef = collection(db, 'notify');
         const queryRef = query(
@@ -39,27 +40,37 @@ function NotifyComponent({ page }) {
         const queryRefAll = query(notifyRef, where('isAll', '==', true), where('deleted', '==', false));
 
         const unsubscribe = onSnapshot(queryRef, (snapshot) => {
-            isLogin &&
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const newNotify = change.doc.data();
-                        localStorage.getItem('uid') &&
-                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                    }
-                });
+            const newNotifications = snapshot
+                .docChanges()
+                .filter((change) => change.type === 'added')
+                .map((change) => ({
+                    id: change.doc.id,
+                    ...change.doc.data(),
+                    time: change.doc.data().time.toMillis(),
+                }));
+            const batchedNotifications = [...newNotifications, ...notifyData];
+
+            if (batchedNotifications.length > 0) {
+                dispatch(setNotifyData(batchedNotifications));
+            }
 
             setLoading(false);
         });
 
         const unsubscribeAll = onSnapshot(queryRefAll, (snapshot) => {
-            isLogin &&
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const newNotify = change.doc.data();
-                        localStorage.getItem('uid') &&
-                            setNotifyData((prev) => [{ id: change.doc.id, ...newNotify }, ...prev]);
-                    }
-                });
+            const newNotifications = snapshot
+                .docChanges()
+                .filter((change) => change.type === 'added')
+                .map((change) => ({
+                    id: change.doc.id,
+                    ...change.doc.data(),
+                }));
+
+            const batchedNotifications = [...newNotifications, ...notifyData];
+
+            if (batchedNotifications.length > 0) {
+                dispatch(setNotifyData(batchedNotifications));
+            }
 
             setLoading(false);
         });
@@ -73,7 +84,7 @@ function NotifyComponent({ page }) {
         const newData = notifyData.sort((a, b) => {
             return b.time.seconds - a.time.seconds;
         });
-        setNotifyData(newData);
+        dispatch(setNotifyData(newData));
     }, [notifyData]);
     useEffect(() => {
         const newData =

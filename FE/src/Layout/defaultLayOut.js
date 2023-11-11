@@ -3,7 +3,7 @@ import Header from '~/Header';
 import ScrollToTop from '~/component/scrollToTop';
 
 function DefaultLayout({ Page, setShow, showCart, setShowCart, setUid }) {
-    const [active, setActive] = useState(1);
+    const [active, setActive] = useState('cake');
     return (
         <>
             <Header

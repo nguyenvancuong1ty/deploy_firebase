@@ -31,6 +31,7 @@ const LoginCpn = ({ setShow, setUid }) => {
                 localStorage.setItem('address', res.data.metadata.data.address);
                 localStorage.setItem('account', res.data.metadata.data.type_account);
                 localStorage.setItem('token', res.data.metadata.accessToken);
+                sessionStorage.setItem('reduxAuthState', JSON.stringify(res.data.metadata.data));
                 setUid(res.data.metadata.data.Id);
                 dispatch(setAuth({ ...res.data.metadata.data }));
                 setTimeout(() => {

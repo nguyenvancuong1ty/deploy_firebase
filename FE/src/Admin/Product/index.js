@@ -20,16 +20,16 @@ function ProductPage() {
     const [reRender, setReRender] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         const fetchData = async () => {
-            setLoading(true);
             try {
                 const res = await axios({
                     method: 'GET',
                     url: `${process.env.REACT_APP_API_URL}/product/search`,
                 });
                 setProduct(res.data.metadata);
-                setLoading(false);
             } catch {}
+            setLoading(false);
         };
         fetchData();
     }, [reRender]);
@@ -241,7 +241,7 @@ function ProductPage() {
                         dataSource={data}
                         scroll={{
                             x: 1600,
-                            y: 670,
+                            y: 600,
                         }}
                     />
                 )}

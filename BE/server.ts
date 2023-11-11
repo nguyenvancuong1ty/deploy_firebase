@@ -16,6 +16,7 @@ import NotifyService from './src/service/service.notify';
 import ProductService from './src/service/service.product';
 import { Timestamp, db } from './src/db/firebase';
 import saleRouter from './src/routes/route.sale';
+import typeProductRouter from './src/routes/route.type_product';
 const app = express();
 const port = process.env.PORT;
 
@@ -44,6 +45,7 @@ app.use('/', cartRouter);
 app.use('/', orderRouter);
 app.use('/', notifyRouter);
 app.use('/', saleRouter);
+app.use('/', typeProductRouter);
 
 app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'ejs');
@@ -57,7 +59,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 const job = new CronJob(
-    '18 29 16 * * *', // cronTime
+    '55 11 9 * * *', // cronTime
     async function () {
         const data = await ProductService.getExpiredProducts(10);
         if (Array.isArray(data) && data.length > 0) {

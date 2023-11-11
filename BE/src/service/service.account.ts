@@ -96,9 +96,9 @@ class AccountService {
 
     static async getAllAccount(req: Request, res: Response): Promise<any> {
         const accountRef = db.collection('account');
-        const querySnapshot = await accountRef.get();
+        const querySnapshot = await accountRef.where('deleted', '==', false).get();
         const response = querySnapshot.docs.map(async (doc: any) => {
-            const account: Account = { Id: doc.id, ...doc.data() };
+            const account: Account = { Id: doc.id, ...doc.data(), timeCreate: doc.data().timeCreate.toMillis() };
             return { ...account };
         });
         const data = await Promise.all(response);

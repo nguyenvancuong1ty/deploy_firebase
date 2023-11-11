@@ -11,6 +11,7 @@ import Detail from './Detail';
 import DefaultLayout from './Layout/defaultLayOut';
 import Admin from './Admin';
 import NotFoundPage from './NotfoundPage';
+import Info from './Info';
 function App() {
     const [show, setShow] = useState(false);
     const [showCart, setShowCart] = useState(false);
@@ -31,7 +32,6 @@ function App() {
             setAuthData(authData);
         }
     }, [refreshToken, authData]);
-    console.log(JSON.parse(authData));
     return (
         <Router>
             <div className="App" onClick={() => setShowCart(false)}>
@@ -61,6 +61,18 @@ function App() {
                         }
                     />
                     <Route path="/notify" element={<NotificationComponent></NotificationComponent>} />
+                    <Route
+                        path="/info"
+                        element={
+                            <DefaultLayout
+                                Page={<Info />}
+                                setShow={setShow}
+                                showCart={showCart}
+                                setShowCart={setShowCart}
+                                setUid={setUid}
+                            />
+                        }
+                    />
                     <Route
                         path="/admin/*"
                         element={localStorage.getItem('account') === 'admin' ? <Admin /> : <NotFoundPage />}

@@ -38,7 +38,7 @@ class AccountController {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield service_account_1.default.getAllAccount(req, res);
             if (data) {
-                return new response_success_1.CREATED(data).send(res);
+                return new response_success_1.OK(data).send(res);
             }
             return;
         });

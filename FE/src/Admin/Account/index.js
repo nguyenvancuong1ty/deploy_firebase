@@ -1,39 +1,41 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Table } from 'antd';
+import { Button, Popconfirm, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import LoadingAntd from '~/Loading/Loading.antd';
+import ModalAccount from '../Component/Modal_Account';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-function AccountPage({ account }) {
+function AccountPage() {
+    const [account, setAccount] = useState([]);
     const [data, setData] = useState(account);
     const [loading, setLoading] = useState(true);
     const [filteredInfo, setFilteredInfo] = useState({});
-    const typeStyle = (type) => {
-        let color = '';
-        switch (type) {
-            case 'clothes':
-                color = 'yellow';
-                break;
-            case 'candy':
-                color = 'pink';
-                break;
-            case 'cake':
-                color = 'skyblue';
-                break;
-            case 'houseware':
-                color = '#b7eb8f';
-                break;
-            case 'smart device':
-                color = '#adc6ff';
-                break;
-            default:
-                color = '#b7eb8f';
-                break;
-        }
-        return { marginBottom: 0, background: color };
-    };
+    const [modalOpen, setModalOpen] = useState(false);
+    const [accountDetail, setAccountDetail] = useState(null);
+    const [reRender, setReRender] = useState(true);
+
+   
     useEffect(() => {
-        const settingData = () => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const res = await axios({
+                    method: 'GET',
+                    url: `${process.env.REACT_APP_API_URL}/account/`,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                setAccount(res.data.metadata);
+                setLoading(false);
+            } catch {}
+        };
+        fetchData();
+    }, [reRender]);
+    useEffect(() => {
+        const settingAccount = () => {
             const newData = account.map((item) => {
                 return {
                     key: item.Id,
@@ -48,13 +50,39 @@ function AccountPage({ account }) {
             });
             setData(newData);
         };
-        settingData();
+        settingAccount();
     }, [account]);
     useEffect(() => {
         setTimeout(() => {
             setLoading(false);
         }, 500);
     }, []);
+    const confirm = async (Id) => {
+        try {
+            const response = await axios({
+                method: 'put',
+                url: `${process.env.REACT_APP_API_URL}/account/${Id}`,
+                data: {
+                    deleted: true,
+                },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setTimeout(() => {
+                setModalOpen(false);
+                setReRender(!reRender);
+                toast.success('Xóa thành công', {
+                    position: 'bottom-left',
+                    autoClose: 2000,
+                    progress: undefined,
+                    theme: 'light',
+                });
+            }, 500);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const columns = [
         {
             title: 'Full Name',
@@ -117,17 +145,30 @@ function AccountPage({ account }) {
             title: 'Action',
             key: 'operation',
             fixed: 'right',
-            width: 170,
+            width: 110,
             render: (key) => (
                 <>
                     <Button
                         onClick={() => {
-                            alert(key.Id);
+                            const accountOnly = account.find((item) => {
+                                return item.Id === key.Id;
+                            });
+                            setAccountDetail(accountOnly);
+                            setModalOpen(true);
                         }}
                     >
                         Chi tiết
-                    </Button>{' '}
-                    <Button danger>Xóa</Button>
+                    </Button>
+                    <Popconfirm
+                        title="Xóa tài khoản"
+                        placement="left"
+                        description="Xóa tài khoản khỏi hệ thống"
+                        onConfirm={() => confirm(key.Id)}
+                    >
+                        <Button danger onClick={() => {}}>
+                            Xóa
+                        </Button>
+                    </Popconfirm>
                 </>
             ),
         },
@@ -147,11 +188,20 @@ function AccountPage({ account }) {
                         dataSource={data}
                         scroll={{
                             x: 1600,
-                            y: 800,
+                            y: 600,
                         }}
                     />
                 )}
-            </Container>
+            </Container>{' '}
+            <ModalAccount
+                accountDetail={accountDetail}
+                setAccountDetail={setAccountDetail}
+                setModalOpen={setModalOpen}
+                modalOpen={modalOpen}
+                setReRender={setReRender}
+                reRender={reRender}
+                account={account}
+            ></ModalAccount>
         </div>
     );
 }

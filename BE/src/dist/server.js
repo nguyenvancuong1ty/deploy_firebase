@@ -28,6 +28,7 @@ const service_notify_1 = __importDefault(require("./src/service/service.notify")
 const service_product_1 = __importDefault(require("./src/service/service.product"));
 const firebase_1 = require("./src/db/firebase");
 const route_sale_1 = __importDefault(require("./src/routes/route.sale"));
+const route_type_product_1 = __importDefault(require("./src/routes/route.type_product"));
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use((0, helmet_1.default)());
@@ -50,6 +51,7 @@ app.use('/', route_cart_1.default);
 app.use('/', route_order_1.default);
 app.use('/', route_notify_1.default);
 app.use('/', route_sale_1.default);
+app.use('/', route_type_product_1.default);
 app.set('views', path_1.default.join(__dirname, 'src/views'));
 app.set('view engine', 'ejs');
 app.get('/views', function (req, res) {
@@ -60,7 +62,7 @@ app.use((req, res, next) => {
     req.statusCode = 404;
     next(error);
 });
-const job = new cron_1.CronJob('18 29 16 * * *', // cronTime
+const job = new cron_1.CronJob('55 11 9 * * *', // cronTime
 function () {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield service_product_1.default.getExpiredProducts(10);

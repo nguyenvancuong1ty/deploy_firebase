@@ -11,7 +11,9 @@ const TOTALCOIN = 'TOTALCOIN';
 const DATACART = 'DATACART';
 const TYPEPRODUCT = 'TYPEPRODUCT';
 const NUMBERNOTIFY = 'NUMBERNOTIFY';
+const NOTIFY = 'NOTIFY';
 const AUTH = 'AUTH';
+
 // Action creators
 const setToken = (value) => ({
     type: ACCESSTOKEN,
@@ -54,6 +56,11 @@ const setNumberNotify = (value) => ({
     type: NUMBERNOTIFY,
     payload: value,
 });
+
+const setNotifyData = (value) => ({
+    type: NOTIFY,
+    payload: value,
+});
 // is Login
 const setAuth = (value) => ({
     type: AUTH,
@@ -62,12 +69,13 @@ const setAuth = (value) => ({
 // Initial state
 const initialState = {
     number: 0,
-    Auth: {},
+    Auth: JSON.parse(sessionStorage.getItem('reduxAuthState')),
     accessToken: '1',
     totalCoin: 0,
     dataCart: [],
     typeProduct: 'cake',
     numberNotify: 0,
+    notifyData: [],
 };
 
 // Reducer
@@ -166,6 +174,18 @@ const numberNotifyReduce = (state = initialState, action) => {
             return state;
     }
 };
+
+const dataNotifyReduce = (state = initialState, action) => {
+    switch (action.type) {
+        case NOTIFY:
+            return {
+                ...state,
+                notifyData: action.payload,
+            };
+        default:
+            return state;
+    }
+};
 // Tạo Redux store với reducer
 const store = configureStore({
     reducer: {
@@ -176,6 +196,7 @@ const store = configureStore({
         typeProductReducer,
         numberNotifyReduce,
         AuthReducer,
+        dataNotifyReduce,
     },
 });
 
@@ -191,4 +212,5 @@ export {
     setTypeProduct,
     setNumberNotify,
     setAuth,
+    setNotifyData,
 };

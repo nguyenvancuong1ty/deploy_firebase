@@ -19,7 +19,7 @@ class AccountController {
     async getAllAccount(req: Request, res: Response): Promise<void | Response> {
         const data = await AccountService.getAllAccount(req, res);
         if (data) {
-            return new CREATED(data).send(res);
+            return new OK(data).send(res);
         }
         return;
     }

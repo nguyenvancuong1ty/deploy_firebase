@@ -20,7 +20,17 @@ function Header(props) {
     const dataCart = useSelector((state) => state.dataCartReducer.dataCart);
     const uid = localStorage.getItem('uid');
     const [notifyData, setNotifyData] = useState([]);
-
+    const [listType, setListType] = useState([]);
+    useEffect(() => {
+        axios({
+            url: `${process.env.REACT_APP_API_URL}/type/product`,
+            method: 'get',
+        })
+            .then((res) => {
+                setListType(res.data.metadata);
+            })
+            .catch((e) => alert(e.message));
+    }, []);
     let number_product =
         Array.isArray(dataCart) && dataCart.length > 0
             ? dataCart.reduce((init, item) => {
@@ -81,12 +91,6 @@ function Header(props) {
         });
     };
     const handleClickOption = () => {};
-    useEffect(() => {
-        const newData = notifyData.sort((a, b) => {
-            return b.time.seconds - a.time.seconds;
-        });
-        setNotifyData(newData);
-    }, [notifyData]);
     return (
         <header>
             <div className="container res_header">
@@ -120,14 +124,20 @@ function Header(props) {
                             <li className="header__opstion--item account">
                                 {uid ? (
                                     <>
-                                        <div className="header__opstion--link" onClick={handleLogout}>
+                                        <NavLink
+                                            to={'/info'}
+                                            className="header__opstion--link"
+                                            onClick={() => {
+                                                props.setActive('');
+                                            }}
+                                        >
                                             <img
                                                 src="https://raw.githubusercontent.com/nguyenvancuong1ty/imagas/main/account-icon.webp"
                                                 alt=""
                                                 className="header__opstion--img"
                                             />
-                                            <p className="header__opstion--title">Đăng xuất</p>
-                                        </div>
+                                            <p className="header__opstion--title">Tài khoản</p>
+                                        </NavLink>
                                     </>
                                 ) : (
                                     <div className="header__opstion--link" onClick={() => props.setShow(true)}>
@@ -165,7 +175,29 @@ function Header(props) {
                 </div>
                 <div className="container__head">
                     <ul className="grid wide container__head--navbar">
-                        <Link
+                        {listType.length > 0 &&
+                            listType.map((item, index) => {
+                                return (
+                                    <Link
+                                        key={index}
+                                        to="/"
+                                        onClick={() => {
+                                            dispatch(setTypeProduct(item.name));
+                                            props.setActive(item.name);
+                                        }}
+                                        className={
+                                            props.active === item.name
+                                                ? 'head__navbar--item active'
+                                                : 'head__navbar--item'
+                                        }
+                                    >
+                                        <div className="head__navbar--link">
+                                            <b>{item.vnl}</b>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        {/* <Link
                             to="/"
                             onClick={() => {
                                 dispatch(setTypeProduct('cake'));
@@ -237,7 +269,7 @@ function Header(props) {
                             <div className="head__navbar--link">
                                 <b>Quần áo</b>
                             </div>
-                        </Link>
+                        </Link> */}
                     </ul>
                 </div>
             </div>

@@ -15,7 +15,7 @@ accountRouter.post('/account/login', (0, response_error_1.handleError)(accountCo
 accountRouter.post('/account/login-google', (0, response_error_1.handleError)(accountController.handleLoginWithGoogle));
 accountRouter.post('/account/', (0, response_error_1.handleError)(accountController.create));
 accountRouter.post('/account/:id', (0, response_error_1.handleError)(accountController.changePassword));
-accountRouter.patch('/account/:id', (0, response_error_1.handleError)(accountController.update));
+accountRouter.put('/account/:id', authentication_1.authentication, (0, response_error_1.handleError)(accountController.update));
 accountRouter.get('/account/confirm-code/:email', (0, response_error_1.handleError)(accountController.confirmCode));
 accountRouter.post('/account/change-password/:email', authentication_1.authentication, (0, response_error_1.handleError)(accountController.forgetPassword));
 accountRouter.post('/registerNotify', (0, response_error_1.handleError)(accountController.registerNotify));
