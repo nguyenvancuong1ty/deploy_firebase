@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrent, setDataCart, setTotalCoin } from '~/redux';
 import LoadingAntd from '~/Loading/Loading.antd';
-import { Link } from 'react-router-dom';
 function Cart({ dataCart, number }) {
     const { confirm } = Modal;
     const dispatch = useDispatch();
@@ -86,71 +85,72 @@ function Cart({ dataCart, number }) {
         // eslint-disable-next-line
     }, [checkOut]);
     return (
-        <>
-            <div className="wrap_cart">
-                {contextHolder2}
-                {loading && <LoadingAntd subClass="subLoading" />}
-                {!loading && Array.isArray(dataCart) && dataCart.length > 0 ? (
-                    <>
-                        {dataCart.map((item, index) => (
-                            <Link
-                                to={`/detail/${item.product.Id || item.cakeID}`}
-                                className="items"
-                                key={index}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                }}
-                            >
-                                <Checkbox onChange={(e) => onChange(e, item)}></Checkbox>
-                                <img className="images" src={item.product.images} alt="" />
-                                <div className="content">
-                                    <b>{item.product.name}</b>
-                                    <div>
-                                        <div className="price">
-                                            Giá:{' '}
-                                            {(
-                                                item.product.price -
-                                                (item.product.price * item.product.sale.percent || 0) / 100
-                                            ).toLocaleString('en-US')}
-                                        </div>
-                                        <b className="b">{item.quantity}</b>
-                                        {/* <Quantity item={item} checkOut={checkOut} /> */}
+        <div
+            className="wrap_cart"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }}
+        >
+            {contextHolder2}
+            {loading && <LoadingAntd subClass="subLoading" />}
+            {!loading && Array.isArray(dataCart) && dataCart.length > 0 ? (
+                <>
+                    {dataCart.map((item, index) => (
+                        <div
+                            className="items"
+                            key={index}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                        >
+                            <Checkbox onChange={(e) => onChange(e, item)}></Checkbox>
+                            <img className="images" src={item.product.images} alt="" />
+                            <div className="content">
+                                <b>{item.product.name}</b>
+                                <div>
+                                    <div className="price">
+                                        Giá:{' '}
+                                        {(
+                                            item.product.price -
+                                            (item.product.price * item.product.sale.percent || 0) / 100
+                                        ).toLocaleString('en-US')}
                                     </div>
+                                    <b className="b">{item.quantity}</b>
+                                    {/* <Quantity item={item} checkOut={checkOut} /> */}
                                 </div>
-                                <button className="delete" onClick={() => handleDelete(item)}>
-                                    X
-                                </button>
-                            </Link>
-                        ))}
-
-                        <footer>
-                            <b className="total_price">
-                                Tổng tiền tạm tính: <b>{totalCoin.toLocaleString('en-US')}đ</b>
-                            </b>
-                            (Chưa bao gồm phí ship) <br />
-                            <button
-                                onClick={() => {
-                                    checkOut.length > 0
-                                        ? setShowBilling(true)
-                                        : toast.warning('Chọn ít nhất 1 sản phẩm!', {
-                                              position: toast.POSITION.BOTTOM_LEFT,
-                                              autoClose: 1000,
-                                          });
-                                }}
-                                className="button"
-                            >
-                                Tiến hành Đặt hàng
+                            </div>
+                            <button className="delete" onClick={() => handleDelete(item)}>
+                                X
                             </button>
-                        </footer>
-                        {showBilling && (
-                            <Billing product={checkOut} total={totalCoin} setShowBilling={setShowBilling} />
-                        )}
-                    </>
-                ) : (
-                    <Empty />
-                )}
-            </div>
-        </>
+                        </div>
+                    ))}
+
+                    <footer>
+                        <b className="total_price">
+                            Tổng tiền tạm tính: <b>{totalCoin.toLocaleString('en-US')}đ</b>
+                        </b>
+                        (Chưa bao gồm phí ship) <br />
+                        <button
+                            onClick={() => {
+                                checkOut.length > 0
+                                    ? setShowBilling(true)
+                                    : toast.warning('Chọn ít nhất 1 sản phẩm!', {
+                                          position: toast.POSITION.BOTTOM_LEFT,
+                                          autoClose: 1000,
+                                      });
+                            }}
+                            className="button"
+                        >
+                            Tiến hành Đặt hàng
+                        </button>
+                    </footer>
+                    {showBilling && <Billing product={checkOut} total={totalCoin} setShowBilling={setShowBilling} />}
+                </>
+            ) : (
+                <Empty />
+            )}
+        </div>
     );
 }
 

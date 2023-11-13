@@ -11,7 +11,6 @@ function HandleLogout(props) {
     const handleLogout = () => {
         confirm({
             zIndex: 9999,
-            bodyStyle: { height: 150 },
             centered: true,
             icon: <ExclamationCircleFilled />,
             title: 'Đăng xuất',
@@ -39,7 +38,11 @@ function HandleLogout(props) {
         });
     };
 
-    return <div onClick={handleLogout}>{props.element}</div>;
+    return (
+        <div onClick={handleLogout} className={props.className}>
+            {props.element}
+        </div>
+    );
 }
 
 export default HandleLogout;

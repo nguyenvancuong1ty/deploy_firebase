@@ -237,3 +237,8 @@ label.label__change__image input[type='file'] {
 .product__detail--item.info__disable {
     cursor: not-allowed;
 }
+
+span.ant-avatar.ant-avatar-circle.ant-avatar-image.css-dev-only-do-not-override-1w4v3hc {
+    width: 54px;
+    height: 54px;
+}

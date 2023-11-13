@@ -38,6 +38,14 @@ function ChangeQuantityOrder({ data, quantityAddToCart, setQuantityAddToCart, re
                             theme: 'light',
                         });
                     }
+                    if (e.target.value * 1 > remainingProduct) {
+                        toast.warn(remainingProduct ? `Tối đa ${remainingProduct}` : 'hết hàng', {
+                            position: 'bottom-left',
+                            autoClose: 2000,
+                            theme: 'light',
+                        });
+                        setQuantityAddToCart(remainingProduct);
+                    }
                 }}
             />
             <Button

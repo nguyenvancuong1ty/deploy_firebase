@@ -12,6 +12,7 @@ class CartService {
         const cartQuery = db.collection('cart');
         const querySnapshot = await cartQuery.where('uid', '==', uid).where('deleted', '==', false).get();
         const response: Array<any> = [];
+
         await Promise.all(
             querySnapshot.docs.map(async (doc2: any) => {
                 const cartItem: Cart = doc2.data();

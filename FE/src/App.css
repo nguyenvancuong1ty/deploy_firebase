@@ -489,3 +489,27 @@ body::-webkit-scrollbar {
     z-index: 9;
     width: 200px !important;
 }
+
+.button__left__position {
+    position: absolute;
+    display: flex;
+    right: 12px;
+    bottom: 4px;
+}
+
+.tabs__right {
+    position: relative;
+    background-color: rgb(230, 230, 230);
+}
+
+.ant-descriptions.css-dev-only-do-not-override-1w4v3hc {
+    padding-bottom: 64px !important;
+}
+
+.cart__info--option {
+    margin: 0 12px;
+    display: flex;
+}
+.cart__info--option.modifier {
+    margin-right: 100px;
+}

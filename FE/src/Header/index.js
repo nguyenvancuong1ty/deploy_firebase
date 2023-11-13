@@ -125,7 +125,7 @@ function Header(props) {
                                 {uid ? (
                                     <>
                                         <NavLink
-                                            to={'/info'}
+                                            to={'/info?active=1'}
                                             className="header__opstion--link"
                                             onClick={() => {
                                                 props.setActive('');
@@ -152,12 +152,12 @@ function Header(props) {
                             </li>
                             <li
                                 className="header__opstion--item product__show"
-                                onClick={(e) => {
-                                    e.stopPropagation();
+                                onMouseOver={() => {
                                     props.setShowCart(true);
                                 }}
+                                onMouseOut={() => props.setShowCart(false)}
                             >
-                                <div to="/cart" className="header__opstion--link">
+                                <Link to={`/info?active=3`} className="header__opstion--link">
                                     <img
                                         src="https://raw.githubusercontent.com/nguyenvancuong1ty/imagas/main/cart-icon.webp"
                                         alt=""
@@ -167,7 +167,7 @@ function Header(props) {
                                     <div className="number__product">
                                         <span className="number">{number}</span>
                                     </div>
-                                </div>
+                                </Link>
                                 {props.showCart && <Cart uid={uid} dataCart={dataCart} number={number} />}
                             </li>
                         </ul>

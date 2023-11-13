@@ -36,6 +36,7 @@ class ProductService {
             const productRef = firebase_1.db.collection('products').doc(id);
             const doc = yield productRef.get();
             let response = doc.data();
+            console.log('ID', id, 'response', response);
             const sale = response.sale ? yield service_sale_1.default.getSale(response.sale) : '';
             response = Object.assign(Object.assign({}, response), { sale: sale });
             return response;

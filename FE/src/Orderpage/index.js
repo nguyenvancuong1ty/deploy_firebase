@@ -146,6 +146,7 @@ const OrderPage = () => {
         confirm({
             zIndex: 9999,
             title: 'Hủy đơn hàng',
+            centered: true,
             content: 'Bạn muốn hủy giao đơn hàng ?',
             onOk() {
                 setLoading(true);

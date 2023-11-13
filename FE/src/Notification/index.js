@@ -44,7 +44,7 @@ function NotificationComponent() {
                     }));
 
                 await axios({
-                    method: 'patch',
+                    method: 'put',
                     url: `${process.env.REACT_APP_API_URL}/account/${localStorage.getItem('uid')}`,
                     data: {
                         tokenNotify: currentToken,

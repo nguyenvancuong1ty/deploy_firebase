@@ -11,12 +11,11 @@ const authorization = (authority) => (req, res, next) => {
     jwt.verify(token, process.env.SECRET, function (err, decoded) {
         console.log(decoded);
         if (decoded) {
-            if (authority.includes(decoded.role)) {
+            if (authority.includes(decoded.role) || decoded.email === req.body.email) {
                 next();
             }
             else
                 return new response_error_1.FORBIDDEN('You do not have permission to access this resource.').send(res);
-            res;
         }
         else if (err) {
             return new response_error_1.UnAuthorized('Missing token. Authorization denied.').send(res);

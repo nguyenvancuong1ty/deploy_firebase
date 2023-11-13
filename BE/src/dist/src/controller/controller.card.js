@@ -13,14 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_cart_1 = __importDefault(require("../service/service.cart")); // Import your CartService
-const cache_1 = require("../middleware/cache");
 const response_success_1 = require("../utils/response.success");
 const response_error_1 = require("../utils/response.error");
 class CartController {
     getCartByUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield service_cart_1.default.getCartByUser(req, res);
-            (0, cache_1.saveDataToCache)(req, data);
             return new response_success_1.OK(data).send(res);
         });
     }
@@ -31,7 +29,7 @@ class CartController {
                 return new response_success_1.CREATED(data).send(res);
             }
             else {
-                return new response_success_1.CREATED(data, "Tài nguyên tồn tại").send(res);
+                return new response_success_1.CREATED(data, 'Tài nguyên tồn tại').send(res);
             }
         });
     }

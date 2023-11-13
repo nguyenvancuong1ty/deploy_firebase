@@ -27,6 +27,7 @@ class ProductService {
         const productRef = db.collection('products').doc(id);
         const doc = await productRef.get();
         let response: any = doc.data();
+        console.log('ID', id, 'response', response);
         const sale: object | string = response.sale ? await SaleService.getSale(response.sale) : '';
         response = { ...response, sale: sale };
         return response;
@@ -35,6 +36,7 @@ class ProductService {
     static async getAllProduct(): Promise<Array<object>> {
         const productRef = db.collection('products');
         const querySnapshot = await productRef.where('deleted', '==', false).get();
+
         const data = querySnapshot.docs.map(async (doc: any) => {
             const product: Product = { Id: doc.id, ...doc.data() };
             const sale: object | string = product.sale ? await SaleService.getSale(product.sale) : '';

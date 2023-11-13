@@ -8,7 +8,6 @@ import { Conflict, INTERNAL_SERVER_ERROR } from '../utils/response.error';
 class CartController {
     async getCartByUser(req: Request, res: Response): Promise<Response | any> {
         const data: Array<Cart> = await CartService.getCartByUser(req, res);
-        saveDataToCache(req, data);
         return new OK(data).send(res);
     }
 
@@ -17,7 +16,7 @@ class CartController {
         if (data.result) {
             return new CREATED(data).send(res);
         } else {
-            return new CREATED(data, "Tài nguyên tồn tại").send(res);
+            return new CREATED(data, 'Tài nguyên tồn tại').send(res);
         }
     }
 
