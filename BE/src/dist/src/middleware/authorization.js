@@ -10,8 +10,9 @@ const authorization = (authority) => (req, res, next) => {
     }
     jwt.verify(token, process.env.SECRET, function (err, decoded) {
         console.log(decoded);
+        console.log(req.body);
         if (decoded) {
-            if (authority.includes(decoded.role) || decoded.email === req.body.email) {
+            if (authority.includes(decoded.role) || decoded.email === req.body.email || decoded.email === req.body.username) {
                 next();
             }
             else

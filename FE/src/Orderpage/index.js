@@ -8,10 +8,12 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '~/firebase';
 import Bill from '~/component/Bill';
 import Loading from '~/Loading';
+import { useSelector } from 'react-redux';
 const { RangePicker } = DatePicker;
 const { confirm } = Modal;
 const OrderPage = () => {
-    let user = localStorage.getItem('account');
+    const info = useSelector((state) => state.AuthReducer.Auth);
+    let user = info.type_account;
     const [data, setData] = useState([]);
     const [dataFilter, setDataFilter] = useState(data);
     const [buttonActive, setButtonActive] = useState(3);

@@ -238,7 +238,13 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 <td>394 Mỹ Đình 1, Hà Nội</td>
                                 {type === 'pending' && (
                                     <>
-                                        <td>{getDateFormat(new Date(item.order_date._seconds * 1000))}</td>
+                                        <td>
+                                            {getDateFormat(
+                                                new Date(
+                                                    item.order_date._seconds * 1000 || item.order_date.seconds * 1000,
+                                                ),
+                                            )}
+                                        </td>
                                         <td>
                                             <Button onClick={() => handlePickup(item)}>Nhận</Button>
                                         </td>
@@ -246,7 +252,14 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 )}
                                 {type === 'shipping' && (
                                     <>
-                                        <td>{getDateFormat(new Date(item.start_shipping_date._seconds * 1000))}</td>
+                                        <td>
+                                            {getDateFormat(
+                                                new Date(
+                                                    item.start_shipping_date._seconds * 1000 ||
+                                                        item.start_shipping_date.seconds * 1000,
+                                                ),
+                                            )}
+                                        </td>
                                         <td>
                                             <Button onClick={() => handleComplete(item)}>Hoàn thành</Button>
                                             <Button onClick={() => handleCancel(item)}>Hủy</Button>
@@ -255,7 +268,14 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                 )}
                                 {type === 'shipped' && (
                                     <>
-                                        <td>{getDateFormat(new Date(item.shipped_date._seconds * 1000))}</td>
+                                        <td>
+                                            {getDateFormat(
+                                                new Date(
+                                                    item.shipped_date._seconds * 1000 ||
+                                                        item.shipped_date.seconds * 1000,
+                                                ),
+                                            )}
+                                        </td>
                                         <td>{item.status}</td>
                                     </>
                                 )}

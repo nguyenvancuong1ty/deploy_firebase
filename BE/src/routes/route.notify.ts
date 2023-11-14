@@ -8,7 +8,7 @@ import notifyController from '../controller/controller.notify';
 const notify = new notifyController();
 
 //routes
-notifyRouter.get('/notify/:uid', authentication, handleError(notify.getNotifyOfUser));
 notifyRouter.get('/notify/public', authentication, handleError(notify.getNotifyAllUser));
+notifyRouter.get('/notify/:uid', authentication, handleError(notify.getNotifyOfUser));
 notifyRouter.patch('/notify/:id', authentication, handleError(notify.updateNotify));
 export default notifyRouter;

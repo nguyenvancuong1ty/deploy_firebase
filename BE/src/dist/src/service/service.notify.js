@@ -29,12 +29,12 @@ class NotifyService {
         return __awaiter(this, void 0, void 0, function* () {
             const notifyQuery = firebase_1.db.collection('notify');
             const querySnapshot = yield notifyQuery.where('isAll', '==', true).where('deleted', '==', false).get();
-            const response = [];
-            yield Promise.all(querySnapshot.docs.map((doc2) => __awaiter(this, void 0, void 0, function* () {
+            const response = yield querySnapshot.docs.map((doc2) => __awaiter(this, void 0, void 0, function* () {
                 const notifyItem = doc2.data();
-                response.push(Object.assign(Object.assign({}, notifyItem), { id: doc2.id }));
-            })));
-            return response;
+                return Object.assign(Object.assign({}, notifyItem), { id: doc2.id });
+            }));
+            console.log(response);
+            return yield Promise.all(response);
         });
     }
     static addNotifyOfUser(req, res) {

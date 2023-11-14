@@ -21,14 +21,14 @@ class NotifyService {
     static async getNotifyAllUser(req: Request, res: Response): Promise<Array<Notify>> {
         const notifyQuery = db.collection('notify');
         const querySnapshot = await notifyQuery.where('isAll', '==', true).where('deleted', '==', false).get();
-        const response: Array<any> = [];
-        await Promise.all(
-            querySnapshot.docs.map(async (doc2: any) => {
-                const notifyItem: Notify = doc2.data();
-                response.push({ ...notifyItem, id: doc2.id });
-            }),
-        );
-        return response;
+
+        const response = await querySnapshot.docs.map(async (doc2: any) => {
+            const notifyItem: Notify = doc2.data();
+            return { ...notifyItem, id: doc2.id };
+        });
+        console.log(response);
+        
+        return await Promise.all(response);
     }
     static async addNotifyOfUser(req: Request, res: Response): Promise<any> {
         const { uid } = req.params || req.body;

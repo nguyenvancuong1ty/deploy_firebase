@@ -1,7 +1,7 @@
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Button, Descriptions, Input, Modal, Tabs } from 'antd';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -16,10 +16,11 @@ function Info() {
     const searchParams = new URLSearchParams(location.search);
     const info = useSelector((state) => state.AuthReducer.Auth);
     const [infoChange, setInfoChange] = useState(false);
-    const number = useSelector((state) => state.numberReducer.number);
-    const dataCart = useSelector((state) => state.dataCartReducer.dataCart);
+    const [active, setActive] = useState(searchParams.get('active'));
     const dispatch = useDispatch();
     const { confirm } = Modal;
+
+    console.log(active, searchParams.get('active'));
     const handleInfoChange = (e) => {
         infoChange === false && setInfoChange(true);
         const { name, value } = e.target;
@@ -33,6 +34,7 @@ function Info() {
             progress: undefined,
             theme: 'light',
         });
+    console.log(info);
     const handleUpdateInfo = () => {
         confirm({
             zIndex: 9999,
@@ -149,7 +151,7 @@ function Info() {
             children: (
                 <Input
                     name="username"
-                    onChange={handleInfoChange}
+                    disabled
                     value={info.username || ''}
                     style={{
                         width: 'max-content',
@@ -161,7 +163,7 @@ function Info() {
     const tabItem = [
         {
             label: <span>Thông tin tài khoản</span>,
-            key: 1,
+            key: '1',
             children: (
                 <div className="tabs__right">
                     <Descriptions
@@ -179,26 +181,28 @@ function Info() {
         },
         {
             label: `Đơn hàng`,
-            key: 2,
+            key: '2',
             children: <OrderPage />,
         },
         {
             label: `Giỏ hàng`,
-            key: 3,
+            key: '3',
             children: <CartInfo />,
         },
         {
             label: `Đổi mật khẩu`,
-            key: 4,
-            children: `vvvvv`,
+            key: '4',
+            children: `Chức năng đang phát triển`,
         },
     ];
-    console.log(searchParams.get('active'));
+    useEffect(() => {
+        setActive(searchParams.get('active'));
+    }, [searchParams.get('active')]);
     return (
         <Container>
             <Row>
                 <Col>
-                    <Tabs tabPosition={'left'} items={tabItem} defaultActiveKey={searchParams.get('active') * 1}></Tabs>
+                    <Tabs tabPosition={'left'} items={tabItem} defaultActiveKey={active}></Tabs>
                 </Col>
             </Row>
         </Container>

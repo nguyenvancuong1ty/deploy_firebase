@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input, Modal, Space, Spin, Tooltip } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 const Billing = ({ product, total, setShowBilling }) => {
     const [address, setAddress] = useState(localStorage.getItem('address'));
+    const account = useSelector((state) => state.AuthReducer.Auth);
     const [distance, setDistance] = useState(0);
     const [totalShippingCost, setTotalShippingCost] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -57,7 +59,6 @@ const Billing = ({ product, total, setShowBilling }) => {
             product.length > 0 && handleOrder();
         }
     };
-    console.log('product', product[0].ID);
     const handleOrder = () => {
         setLoading(true);
         const promises = product.map((element) => {
@@ -121,6 +122,12 @@ const Billing = ({ product, total, setShowBilling }) => {
             </h2>
             <Space direction="horizontal" size="middle">
                 <Input
+                    placeholder="Số điện thoại"
+                    // ref={ref}
+                    value={account.phoneNuber || ''}
+                    onChange={(e) => setAddress(e.target.value)}
+                />
+                <Input
                     placeholder="Địa chỉ giao hàng"
                     ref={ref}
                     addonAfter={
@@ -136,7 +143,6 @@ const Billing = ({ product, total, setShowBilling }) => {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
-
                 <Button type="primary" onClick={handleAddress}>
                     Ok
                 </Button>

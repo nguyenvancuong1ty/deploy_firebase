@@ -40,7 +40,7 @@ class CartService {
             await db
                 .collection('cart')
                 .doc(response[0].id)
-                .update({ quantity: quantity, createdDate: Timestamp.fromDate(new Date()) });
+                .update({ quantity: quantity, timeUpdate: Timestamp.fromDate(new Date()) });
             return {
                 result: false,
                 oldQuantity: response[0].quantity,

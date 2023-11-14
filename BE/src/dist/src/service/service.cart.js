@@ -47,7 +47,7 @@ class CartService {
                 yield firebase_1.db
                     .collection('cart')
                     .doc(response[0].id)
-                    .update({ quantity: quantity, createdDate: firebase_1.Timestamp.fromDate(new Date()) });
+                    .update({ quantity: quantity, timeUpdate: firebase_1.Timestamp.fromDate(new Date()) });
                 return {
                     result: false,
                     oldQuantity: response[0].quantity,

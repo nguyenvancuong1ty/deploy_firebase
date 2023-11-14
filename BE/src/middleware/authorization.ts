@@ -10,8 +10,9 @@ export const authorization = (authority: any) => (req: Request | any, res: Respo
 
     jwt.verify(token, process.env.SECRET, function (err: Error, decoded: any) {
         console.log(decoded);
+        console.log(req.body);
         if (decoded) {
-            if (authority.includes(decoded.role) || decoded.email === req.body.email) {
+            if (authority.includes(decoded.role) || decoded.email === req.body.email || decoded.email === req.body.username) {
                 next();
             } else return new FORBIDDEN('You do not have permission to access this resource.').send(res);
         } else if (err) {

@@ -38,10 +38,10 @@ class AccountService {
             data.push(account);
         });
         if (Array.isArray(data) && data.length > 0 && bcrypt.compareSync(password, data[0].password)) {
-            const accessToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
+            const accessToken = jwt.sign({ email: email || data[0].username, role: data[0].type_account }, process.env.SECRET, {
                 expiresIn: '3d',
             });
-            const refreshToken = jwt.sign({ email: email, role: data[0].type_account }, process.env.SECRET, {
+            const refreshToken = jwt.sign({ email: email || data[0].username, role: data[0].type_account }, process.env.SECRET, {
                 expiresIn: '7d',
             });
             res.cookie('refreshToken', refreshToken);
@@ -150,6 +150,7 @@ class AccountService {
 
     static async update(req: Request, res: Response): Promise<any> {
         const { id } = req.params;
+        delete req.body.timeCreate;
         const response = await db.collection('account').doc(id).update(req.body);
         return { Id: response.id };
     }

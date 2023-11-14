@@ -175,6 +175,8 @@ body::-webkit-scrollbar {
     }
 }
 .billing-wrapper {
+    z-index: 99999;
+    text-align: center;
     width: 900px;
     max-width: 100%;
     position: fixed;
@@ -207,7 +209,9 @@ body::-webkit-scrollbar {
     padding: 8px;
     border: 1px solid #ccc;
 }
-
+.billing-table img {
+    width: 50px;
+}
 .billing-total {
     margin-top: 20px;
 }
