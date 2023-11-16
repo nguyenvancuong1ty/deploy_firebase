@@ -121,11 +121,12 @@ select {
 .detail__btn--order {
     background-color: #ff4040;
     border: #ff3d3d;
+    color: #fff;
     margin-right: 12px;
 }
 
 .detail__btn--order:hover {
-    background-color: #ff2d2d !important;
+    color: #fff !important;
     outline: none;
 }
 
@@ -173,4 +174,8 @@ select {
 
 .ant-image.css-dev-only-do-not-override-1w4v3hc {
     display: block;
+}
+
+span.ant-radio-button.ant-radio-button-checked {
+    background: #ff4040 !important;
 }

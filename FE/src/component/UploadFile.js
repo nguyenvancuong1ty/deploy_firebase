@@ -11,10 +11,9 @@ const UploadFile = ({ setProductDetail }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         const { name } = e.target;
-        console.log(name, 'name, value');
         if (!file) return;
         const storageRef = ref(storage, `files/${file.name}`);
-        console.log('fullPath', storageRef.fullPath, '____', storageRef.name, '______', storageRef.bucket);
+
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         uploadTask.on(
@@ -29,8 +28,6 @@ const UploadFile = ({ setProductDetail }) => {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setProductDetail((prev) => {
-                        console.log(prev);
-                        console.log(downloadURL);
                         return { ...prev, [name]: downloadURL };
                     });
                 });

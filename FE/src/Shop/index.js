@@ -3,10 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
 import api from '~/config/axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'antd';
+import { addNotifyData } from '~/Redux/notifyDataSlice';
 const Shop = () => {
     const [imgUrl, setImgUrl] = useState(null);
     const [progresspercent, setProgresspercent] = useState(0);
-
+    const notifyData = useSelector((state) => state.notifyData.notifyData);
+    const dispatch = useDispatch();
+    const data = [{ a: 1, b: 2 }, { c: 3 }];
+    const addData = () => {
+        dispatch(addNotifyData(data));
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(e, '---------', e.target);
@@ -87,6 +95,7 @@ const Shop = () => {
                 )}
                 {imgUrl && <img src={imgUrl} alt="uploaded file" height={200} />}
             </div>
+            <Button onClick={addData}>Add data</Button>
         </div>
     );
 };

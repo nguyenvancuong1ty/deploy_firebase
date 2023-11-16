@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { reset, setAuth, setNotifyData, setNumberNotify } from '~/redux';
 import { Modal } from 'antd';
+import { resetNumberNotify } from '~/Redux/numberNotifySlice';
+import { resetNotifyData } from '~/Redux/notifyDataSlice';
 function HandleLogout(props) {
     const { confirm } = Modal;
     const dispatch = useDispatch();
@@ -18,9 +20,11 @@ function HandleLogout(props) {
             cancelText: 'Hủy',
             onOk() {
                 localStorage.clear();
+                sessionStorage.clear();
                 dispatch(reset());
-                dispatch(setNumberNotify(0));
+                dispatch(resetNumberNotify());
                 dispatch(setAuth({}));
+                dispatch(resetNotifyData());
                 props.setUid && props.setUid(null);
                 dispatch(setNotifyData([]));
                 toast.success('Đăng xuất thành công', {

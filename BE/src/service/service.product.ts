@@ -65,7 +65,7 @@ class ProductService {
         const { id } = req.params;
         const productRef = db.collection('products').doc(id);
         console.log(req.body);
-        const response = await productRef.set({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
+        const response = await productRef.update({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
         return response;
     }
 

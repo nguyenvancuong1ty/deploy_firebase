@@ -26,83 +26,7 @@ function NotifyPage({ product, account, order, ordered }) {
             setLoading(false);
         }, 500);
     }, []);
-    const a = [
-        {
-            quantity: 25,
-            size: 'S',
-            color: 'vàng',
-        },
-        {
-            quantity: 25,
-            size: 'S',
-            color: 'đen',
-        },
-        {
-            quantity: 25,
-            size: 'S',
-            color: 'trắng',
-        },
-        {
-            quantity: 25,
-            size: 'S',
-            color: 'nâu',
-        },
-        {
-            quantity: 12,
-            size: 'M',
-            color: 'vàng',
-        },
-        {
-            quantity: 88,
-            size: 'M',
-            color: 'đen',
-        },
-        {
-            quantity: 17,
-            size: 'M',
-            color: 'trắng',
-        },
-        {
-            quantity: 44,
-            size: 'M',
-            color: 'nâu',
-        },
-        {
-            quantity: 12,
-            size: 'L',
-            color: 'vàng',
-        },
-        {
-            quantity: 88,
-            size: 'L',
-            color: 'đen',
-        },
-        {
-            quantity: 17,
-            size: 'L',
-            color: 'trắng',
-        },
-    ];
 
-    const labels = a.map((item) => {
-        const b = Object.entries(item);
-        const option = b.map(([key, value]) => {
-            if (key !== 'quantity') return `${key}: ${value}`;
-        });
-        let label = option.join(' - ');
-        if (label.startsWith(' - ')) {
-            label = label.substring(2);
-        }
-
-        // Kiểm tra và loại bỏ ký tự "-" ở cuối chuỗi
-        if (label.endsWith(' - ')) {
-            label = label.substring(0, label.length - 2);
-        }
-        return { label: label, value: JSON.stringify(item) };
-    });
-    const onChange = (e) => {
-        console.log(JSON.parse(e.target.value));
-    };
     return (
         <div className="admin__wrap--content">
             <Container>
@@ -126,17 +50,6 @@ function NotifyPage({ product, account, order, ordered }) {
                                             title={<b>{item.title}</b>}
                                             description={<p>{item.description}</p>}
                                         ></List.Item.Meta>
-                                        <Radio.Group
-                                            buttonStyle="solid"
-                                            style={{
-                                                marginTop: 16,
-                                            }}
-                                            onChange={onChange}
-                                        >
-                                            {labels.map((item) => {
-                                                return <Radio.Button value={item.value}>{item.label}</Radio.Button>;
-                                            })}
-                                        </Radio.Group>
                                     </List.Item>
                                 )}
                             />

@@ -109,6 +109,7 @@ const Billing = ({ product, total, setShowBilling }) => {
     const notifySuccess = () => {
         toast.success('Đặt hàng thành công !', { position: toast.POSITION.TOP_CENTER });
     };
+   
     return (
         <div className="billing-wrapper">
             <h2>Hóa đơn</h2>
@@ -162,27 +163,18 @@ const Billing = ({ product, total, setShowBilling }) => {
                 <tbody>
                     {product.map((item, index) => {
                         const itemShippingCost = getShipCost(item, distance);
-                        console.log(item);
+                       
                         return (
                             <tr key={index}>
                                 <td>
                                     <img alt="" src={item.product.images} className="images" />
                                 </td>
                                 <td>{item.product.name}</td>
-                                <td>
-                                    {item.product.price - (item.product.price * item.product.sale.percent || 0) / 100}
-                                </td>
+                                <td>{item.realPrice}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.product.weight}</td>
                                 <td>{itemShippingCost}</td>
-                                <td>
-                                    {Math.floor(
-                                        (item.product.price -
-                                            (item.product.price * item.product.sale.percent || 0) / 100) *
-                                            item.quantity +
-                                            itemShippingCost,
-                                    )}
-                                </td>
+                                <td>{Math.floor(item.realPrice * item.quantity + itemShippingCost)}</td>
                             </tr>
                         );
                     })}

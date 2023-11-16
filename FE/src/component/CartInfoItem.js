@@ -38,7 +38,7 @@ function CartInfoItem({ item, checkOut, setCheckOut, checked }) {
     useEffect(() => {
         setDefaultChecked(checked);
     }, [checked]);
-    console.log(defaultChecked);
+
     useEffect(() => {
         product && setRemainingProduct(product.data.metadata.quantity - product.data.metadata.sold);
     }, [product]);
@@ -78,7 +78,7 @@ function CartInfoItem({ item, checkOut, setCheckOut, checked }) {
                     });
             },
             onCancel() {
-                console.log('Cancel');
+                return;
             },
         });
         localStorage.setItem('number_product', localStorage.getItem('number_product') - item.total_quantity);
@@ -141,7 +141,7 @@ function CartInfoItem({ item, checkOut, setCheckOut, checked }) {
                 }
             },
             onCancel() {
-                console.log('Cancel');
+                return;
             },
         });
     };
@@ -167,10 +167,7 @@ function CartInfoItem({ item, checkOut, setCheckOut, checked }) {
                     description={
                         <b className="price">
                             Giá:
-                            {(
-                                item.data.product.price -
-                                (item.data.product.price * item.data.product.sale.percent || 0) / 100
-                            ).toLocaleString('en-US')}
+                            {item.data.realPrice.toLocaleString('en-US')}
                         </b>
                     }
                 />

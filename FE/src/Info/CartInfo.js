@@ -18,11 +18,7 @@ function CartInfo() {
         const total =
             Array.isArray(checkOut) && checkOut.length > 0
                 ? checkOut.reduce((init, item) => {
-                      return (
-                          init +
-                          (item.product.price - (item.product.price * item.product.sale.percent || 0) / 100) *
-                              item.quantity
-                      );
+                      return init + item.realPrice * item.quantity;
                   }, 0)
                 : 0;
         dispatch(setTotalCoin(total));

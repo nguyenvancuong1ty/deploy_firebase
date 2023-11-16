@@ -1,23 +1,21 @@
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import LoadingAntd from '~/Loading/Loading.antd';
-import useAxios from '~/useAxios';
 import './Detail.css';
 import { setCurrent } from '~/redux';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '~/config/axios';
-import { Image, Modal, Radio } from 'antd';
+import { Button, Image, Modal, Radio } from 'antd';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChangeQuantityOrder from '~/component/ChangeQuantityOrder';
 import Footer from '~/component/Footer';
 import LoginCpn from '~/LoginCpn';
 import axios from 'axios';
 function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
     const { confirm } = Modal;
-    const formRef = useRef(null);
     const { id } = useParams();
     const number = useSelector((state) => state.numberReducer.number);
     const [uid, setUid] = useState(localStorage.getItem('uid'));
@@ -25,13 +23,14 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
     const [quantityAddToCart, setQuantityAddToCart] = useState(1);
     const [primaryImage, setPrimaryImage] = useState('');
     const [specialAttributes, setSpecialAttributes] = useState({});
-    const [selectTag, setSelectTag] = useState([]);
-    const [labels, setLabels] = useState([]);
+    const [labels, setLabels] = useState(null);
     const [remainingProduct, setRemainingProduct] = useState(0);
     const [realPrice, setRealPrice] = useState(0);
     const [initialPrice, setInitialPrice] = useState(0);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
+    const [attribute, setAttribute] = useState(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setLoading(true);
@@ -44,8 +43,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
             setLoading(false);
         };
         fetchData();
-    }, []);
-    console.log('data', data);
+    }, [id]);
     const getRealPrice = (data, price) => {
         if (price) {
             return data.sale.percent ? price - (price * data.sale.percent) / 100 : price;
@@ -61,18 +59,6 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
             setInitialPrice(data.price);
         }
     }, [data]);
-    useEffect(() => {
-        const inputElements = formRef.current && formRef.current.querySelectorAll('select');
-
-        inputElements &&
-            inputElements.forEach((element) => {
-                const { name, value } = element;
-                setSpecialAttributes((prev) => {
-                    return { ...prev, [name]: value };
-                });
-            });
-    }, [selectTag]);
-    const dispatch = useDispatch();
     const addToCartSuccess = () =>
         toast.success('Thêm mặt hàng thành công', {
             position: 'bottom-left',
@@ -99,6 +85,8 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                     cakeID: ID,
                     quantity: quantityAddToCart,
                     modifier: specialAttributes,
+                    initialPrice: initialPrice,
+                    realPrice: realPrice,
                 },
                 {
                     headers: {
@@ -123,83 +111,29 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
         if (!uid) {
             setShow(true);
         } else {
-            const allSelected = Object.values(specialAttributes).some((value) => value === '');
-            if (allSelected) {
-                toast.warn(`Vui lòng chọn ${Object.keys(specialAttributes).toString()}`, {
-                    position: 'bottom-left',
-                    autoClose: 2000,
-                    theme: 'light',
+            if (quantityAddToCart < 1 || quantityAddToCart > quantity) {
+                changeQuantityError(quantity);
+            } else
+                confirm({
+                    style: { marginTop: 150 },
+                    zIndex: 9999,
+                    title: 'Mua hàng',
+                    content: 'Thêm mặt hàng này vào giỏ hàng của bạn?',
+                    onOk() {
+                        handleAddToCart(id);
+                    },
+                    onCancel() {
+                        console.log('Cancel');
+                    },
                 });
-                return;
-            } else {
-                if (quantityAddToCart < 1 || quantityAddToCart > quantity) {
-                    changeQuantityError(quantity);
-                } else
-                    confirm({
-                        style: { marginTop: 150 },
-                        zIndex: 9999,
-                        title: 'Mua hàng',
-                        content: 'Thêm mặt hàng này vào giỏ hàng của bạn?',
-                        onOk() {
-                            handleAddToCart(id);
-                        },
-                        onCancel() {
-                            console.log('Cancel');
-                        },
-                    });
-            }
         }
     };
 
     useEffect(() => {
-        const getSelectTag = (data) => {
-            const arrayData = data && Object.keys(data);
-            const select =
-                arrayData &&
-                arrayData.map((item) => {
-                    return item;
-                });
-            select &&
-                setSelectTag(
-                    select.filter((item) => {
-                        if (item !== 'quantity' && item !== 'price') return item;
-                    }),
-                );
-        };
-        data && Array.isArray(data) && data.length > 0 && getSelectTag(data.attribute);
-    }, [data]);
-    useEffect(() => {
-        function isObjectContained(parent, children) {
-            for (let key in children) {
-                if (children[key] !== parent[key]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        const handleChangeQuantity = () => {
-            const allSelected = Object.values(specialAttributes).some((value) => value === '');
-            if (!allSelected) {
-                const quantity = data.attribute.find((attribute) => {
-                    return isObjectContained(attribute, specialAttributes);
-                });
-                if (quantity) {
-                    setRemainingProduct(quantity.quantity);
-                    quantity.price && setRealPrice(getRealPrice(data, quantity.price));
-                    quantity.price && setInitialPrice(quantity.price);
-                } else {
-                    setRemainingProduct(0);
-                    setRealPrice(getRealPrice(data));
-                    setInitialPrice(data.price);
-                }
-            }
-            return;
-        };
-        data && Array.isArray(data) && data.length > 0 && handleChangeQuantity();
-    }, [specialAttributes]);
-    useEffect(() => {
         const labels =
             data &&
+            Array.isArray(data.attribute) &&
+            data.attribute.length > 0 &&
             data.attribute.map((item) => {
                 const b = Object.entries(item);
                 const option =
@@ -212,8 +146,6 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                 if (label.startsWith(' - ')) {
                     label = label.substring(2);
                 }
-
-                // Kiểm tra và loại bỏ ký tự "-" ở cuối chuỗi
                 if (label.endsWith(' - ')) {
                     label = label.substring(0, label.length - 2);
                 }
@@ -222,11 +154,25 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
         setLabels(labels);
     }, [data]);
 
-    console.log(labels, data);
-
     const onChange = (e) => {
-        console.log(JSON.parse(e.target.value));
+        const attribute = JSON.parse(e.target.value);
+        setAttribute(attribute);
+        if (attribute.price) {
+            setInitialPrice(attribute.price);
+            setRealPrice(getRealPrice(data, attribute.price));
+        }
+        if (attribute.quantity) {
+            setRemainingProduct(attribute.quantity);
+        }
     };
+    useEffect(() => {
+        const specialAttributes = attribute;
+        specialAttributes && delete specialAttributes.price;
+        specialAttributes && delete specialAttributes.quantity;
+        specialAttributes && delete specialAttributes.image;
+        setSpecialAttributes(specialAttributes);
+    }, [attribute]);
+    console.log(specialAttributes);
     return (
         <>
             {loading && <LoadingAntd></LoadingAntd>}
@@ -279,64 +225,30 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                                 <h6 className="detail_info--original--sale">{data.sale.percent || 0}% giảm</h6>
                             </div>
                             <form
-                                ref={formRef}
                                 className=""
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     handleConfirm(id, remainingProduct);
                                 }}
                             >
-                                {' '}
                                 {data.attribute && (
                                     <div className=" detail_info--head select">
-                                        {selectTag.length > 0 &&
-                                            selectTag.map((item, index) => {
-                                                const optionTag = data.attribute.map((attribute) => {
-                                                    return attribute[item];
-                                                });
-                                                const a = [...new Set(optionTag)];
-                                                const select = a.map((item) => {
-                                                    return (
-                                                        <option value={item} key={item}>
-                                                            {item}
-                                                        </option>
-                                                    );
-                                                });
-                                                return (
-                                                    <Fragment key={index}>
-                                                        <p className="detail__info--number--selected">
-                                                            {item}:{' '}
-                                                            <select
-                                                                value={specialAttributes[item] || ''}
-                                                                name={item}
-                                                                id={item}
-                                                                onChange={(e) => {
-                                                                    const { name, value } = e.target;
-                                                                    setSpecialAttributes((prev) => {
-                                                                        return { ...prev, [name]: value };
-                                                                    });
-                                                                }}
-                                                            >
-                                                                {' '}
-                                                                <option value={''}>chọn {item}</option>
-                                                                {select}
-                                                            </select>
-                                                        </p>{' '}
-                                                    </Fragment>
-                                                );
-                                            })}
-
                                         {Array.isArray(labels) && labels.length > 0 && (
                                             <Radio.Group
+                                                defaultValue={attribute}
                                                 buttonStyle="solid"
                                                 style={{
                                                     marginTop: 16,
                                                 }}
                                                 onChange={onChange}
                                             >
-                                                {labels.map((item) => {
-                                                    return <Radio.Button value={item.value}>{item.label}</Radio.Button>;
-                                                })}
+                                                <Container>
+                                                    {labels.map((item, index) => (
+                                                        <Radio.Button key={index} value={item.value}>
+                                                            {item.label}
+                                                        </Radio.Button>
+                                                    ))}
+                                                </Container>
                                             </Radio.Group>
                                         )}
                                     </div>
@@ -351,11 +263,16 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                                     />
                                 </div>
                                 <div className="detail_info--head detail__btn">
-                                    <Button type="submit" size="lg" className="detail__btn--order">
+                                    <Button
+                                        htmlType="submit"
+                                        size="large"
+                                        className="detail__btn--order"
+                                        disabled={attribute ? false : labels && true}
+                                    >
                                         <FontAwesomeIcon icon={faCartPlus} />
                                         <span style={{ marginLeft: 12 }}>Thêm vào giỏ hàng</span>
                                     </Button>
-                                    <Button type="submit" size="lg" className="detail__btn--order">
+                                    <Button type="submit" size="large" className="detail__btn--order" disabled>
                                         <FontAwesomeIcon icon={faCartPlus} />
                                         <span style={{ marginLeft: 12 }}>Mua Ngay</span>
                                     </Button>

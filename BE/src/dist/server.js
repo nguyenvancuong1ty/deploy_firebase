@@ -62,7 +62,7 @@ app.use((req, res, next) => {
     req.statusCode = 404;
     next(error);
 });
-const job = new cron_1.CronJob('55 11 9 * * *', // cronTime
+const job = new cron_1.CronJob('55 30 6 * * *', // cronTime
 function () {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield service_product_1.default.getExpiredProducts(10);

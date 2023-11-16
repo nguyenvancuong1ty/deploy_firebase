@@ -1,6 +1,7 @@
 // Import các hàm cần thiết
 import { configureStore } from '@reduxjs/toolkit';
-
+import notifyDataReducer from './Redux/notifyDataSlice';
+import numberNotifyReducer from './Redux/numberNotifySlice';
 // Action types
 const INCREMENT = 'INCREMENT';
 const DECREASE = 'DECREASE';
@@ -197,6 +198,8 @@ const store = configureStore({
         numberNotifyReduce,
         AuthReducer,
         dataNotifyReduce,
+        notifyData: notifyDataReducer,
+        numberNotify: numberNotifyReducer,
     },
 });
 

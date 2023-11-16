@@ -10,7 +10,6 @@ function Register({ setShow, setUid, setShowRegister }) {
     const [form] = Form.useForm();
 
     const onFinish = async (values) => {
-        console.log(values);
         setLoading(true);
         await axios({
             url: `${process.env.REACT_APP_API_URL}/account`,
@@ -20,7 +19,7 @@ function Register({ setShow, setUid, setShowRegister }) {
         })
             .then((res) => {
                 setLoading(false);
-                console.log(res);
+
                 toast.success('Register success !', { position: toast.POSITION.TOP_CENTER });
                 localStorage.setItem('uid', res.data.metadata.Id);
                 setUid(res.data.metadata.Id);

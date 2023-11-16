@@ -32,7 +32,7 @@ class CartService {
     }
     static addToCart(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { uid, cakeID, quantity, modifier } = req.body;
+            const { uid, cakeID, quantity, modifier, initialPrice, realPrice } = req.body;
             const querySnapshot = yield firebase_1.db
                 .collection('cart')
                 .where('cakeID', '==', cakeID)
@@ -60,6 +60,8 @@ class CartService {
                     quantity: quantity || 1,
                     deleted: false,
                     modifier: modifier,
+                    initialPrice: initialPrice,
+                    realPrice: realPrice,
                     createdDate: firebase_1.Timestamp.fromDate(new Date()),
                 });
                 return {

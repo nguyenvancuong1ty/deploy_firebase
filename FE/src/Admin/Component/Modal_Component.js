@@ -10,11 +10,11 @@ import ListImagesProduct from '../Product/ListImagesProduct';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
 import LoadingSpin from '~/Loading/Loading.spin';
+import SpecialAttribute from './SpecialAttribute';
 function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDetail, setReRender, reRender, product }) {
     const [sale, setSale] = useState(null);
     const [uploadChangeThumb, setUploadChangeThumb] = useState(false);
     const [uploadChangeListImages, setUploadChangeListImages] = useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -156,6 +156,7 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         }
     };
 
+    console.log(productDetail);
     return (
         <Modal
             title="Chi tiết sản phẩm"
@@ -310,6 +311,9 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                                 </div>
                             )}
                         </Col>
+                    </Row>
+                    <Row className="product_detail">
+                        <SpecialAttribute productDetail={productDetail} setProductDetail={setProductDetail} />
                     </Row>
                     <Row className="product_detail">
                         <div className="product__detail--item description">

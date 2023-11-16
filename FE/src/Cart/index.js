@@ -70,15 +70,12 @@ function Cart({ dataCart, number }) {
             setCheckOut(newItem);
         }
     };
+    console.log(checkOut);
     useEffect(() => {
         const total =
             Array.isArray(checkOut) && checkOut.length > 0
                 ? checkOut.reduce((init, item) => {
-                      return (
-                          init +
-                          (item.product.price - (item.product.price * item.product.sale.percent || 0) / 100) *
-                              item.quantity
-                      );
+                      return init + item.realPrice * item.quantity;
                   }, 0)
                 : 0;
         dispatch(setTotalCoin(total));
@@ -109,13 +106,7 @@ function Cart({ dataCart, number }) {
                             <div className="content">
                                 <b>{item.product.name}</b>
                                 <div>
-                                    <div className="price">
-                                        Giá:{' '}
-                                        {(
-                                            item.product.price -
-                                            (item.product.price * item.product.sale.percent || 0) / 100
-                                        ).toLocaleString('en-US')}
-                                    </div>
+                                    <div className="price">Giá: {item.realPrice.toLocaleString('en-US')}</div>
                                     <b className="b">{item.quantity}</b>
                                     {/* <Quantity item={item} checkOut={checkOut} /> */}
                                 </div>

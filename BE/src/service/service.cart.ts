@@ -24,7 +24,7 @@ class CartService {
     }
 
     static async addToCart(req: Request, res: Response): Promise<any> {
-        const { uid, cakeID, quantity, modifier } = req.body;
+        const { uid, cakeID, quantity, modifier, initialPrice, realPrice } = req.body;
         const querySnapshot = await db
             .collection('cart')
             .where('cakeID', '==', cakeID)
@@ -52,6 +52,8 @@ class CartService {
                 quantity: quantity || 1,
                 deleted: false,
                 modifier: modifier,
+                initialPrice: initialPrice,
+                realPrice: realPrice,
                 createdDate: Timestamp.fromDate(new Date()),
             });
             return {

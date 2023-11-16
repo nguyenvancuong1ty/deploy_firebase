@@ -4,10 +4,11 @@ import TimeNotify from './TimeNotify';
 import { useState } from 'react';
 
 import NotifyItem from './NotifyItem';
-function Notify({ loading, notifyData }) {
+import { useSelector } from 'react-redux';
+function Notify({ loading }) {
     const [open, setOpen] = useState(false);
     const [notify, setNotify] = useState({});
-
+    const notifyData = useSelector((state) => state.notifyData.notifyData);
     return (
         <>
             <div className="wrap_notify">

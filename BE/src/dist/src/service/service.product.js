@@ -77,7 +77,7 @@ class ProductService {
             const { id } = req.params;
             const productRef = firebase_1.db.collection('products').doc(id);
             console.log(req.body);
-            const response = yield productRef.set(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
+            const response = yield productRef.update(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
             return response;
         });
     }

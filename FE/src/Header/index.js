@@ -6,12 +6,14 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import 'react-toastify/dist/ReactToastify.css';
 import Search from '~/Search';
 import { reset, setCurrent, setDataCart, setAuth, setNumberNotify, setTypeProduct } from '~/redux';
+import { resetNumberNotify } from '~/Redux/numberNotifySlice';
 import { Modal } from 'antd';
 import Cart from '~/Cart';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import NotifyComponent from '~/component/NotifyComponent';
+import { resetNotifyData } from '~/Redux/notifyDataSlice';
 
 const { confirm } = Modal;
 function Header(props) {
@@ -72,7 +74,8 @@ function Header(props) {
             onOk() {
                 localStorage.clear();
                 dispatch(reset());
-                dispatch(setNumberNotify(0));
+                dispatch(resetNumberNotify());
+                dispatch(resetNotifyData());
                 dispatch(setAuth({}));
                 props.setUid(null);
                 setNotifyData([]);

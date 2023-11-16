@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import TimeNotify from './TimeNotify';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { setNumberNotify } from '~/redux';
-function NotifyItem({ data, index, setNotify, setOpen }) {
+import { useDispatch } from 'react-redux';
+import { decrement } from '~/Redux/numberNotifySlice';
+function NotifyItem({ data, setNotify, setOpen, }) {
     const [isRead, setIsRead] = useState(false);
     const dispatch = useDispatch();
-    const numberNotify = useSelector((state) => state.numberNotifyReduce.numberNotify);
     const updateNotify = async (id) => {
         await axios({
             method: 'patch',
@@ -24,10 +23,11 @@ function NotifyItem({ data, index, setNotify, setOpen }) {
                   },
         });
     };
+
     useEffect(() => {
         const isRead = data.user_id.includes(localStorage.getItem('uid')) && data.isRead === true;
         setIsRead(isRead);
-    }, []);
+    }, [data]);
 
     return (
         <div
@@ -39,7 +39,7 @@ function NotifyItem({ data, index, setNotify, setOpen }) {
                 if (isRead === false) {
                     setIsRead(true);
                     updateNotify(data.id);
-                    dispatch(setNumberNotify(numberNotify - 1));
+                    dispatch(decrement());
                 }
             }}
         >
