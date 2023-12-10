@@ -109,7 +109,9 @@ class AccountController {
         return __awaiter(this, void 0, void 0, function* () {
             const listTopic = [];
             yield firebase_1.messaging
-                .unsubscribeFromTopic(listTopic, process.env.TOPIC)
+                .unsubscribeFromTopic([
+                'dzs_-q9xvavV3ZvPwD6ZWe:APA91bELGR7DKUK-xUYK1fSF3Adzbpe5s4joDC9nI7GCIRljYqrSZPfqpj8cqrAYhmxk8g1Ckk8gltEcviSGjitIOrHFK-O1cg1UG7hiwEkqnSH2UFylRN_Hf32AXV-UeyHMCKA6KnNv',
+            ], process.env.TOPIC)
                 .then(() => {
                 console.log('Successfully subscribed to topi:', process.env.TOPIC);
             })
@@ -121,10 +123,11 @@ class AccountController {
     }
     notifyAll(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { title, body } = req.body;
             const message = {
                 data: {
-                    title: 'Thông báo tổng',
-                    body: 'Thông báo đến tất cả thành viên',
+                    title: title,
+                    body: body,
                 },
                 topic: process.env.TOPIC,
             };
@@ -132,13 +135,13 @@ class AccountController {
             const notifyQuery = firebase_1.db.collection('notify');
             const querySnapshot = yield notifyQuery.add({
                 deleted: false,
-                description: 'Thông báo đến tất cả thành viên',
+                description: body,
                 icon: 'www',
                 isAll: true,
                 isRead: false,
                 link: 'string',
                 time: firebase_1.Timestamp.fromDate(new Date()),
-                title: 'Thông báo tổng',
+                title: title,
                 user_id: [],
             });
             yield Promise.all([messageSend, querySnapshot])

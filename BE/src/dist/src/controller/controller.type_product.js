@@ -21,6 +21,12 @@ class TypeProductController {
             return new response_success_1.OK(data).send(res);
         });
     }
+    updateTypeProduct(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield service_type_product_1.default.updateTypeProduct(req);
+            return new response_success_1.OK(data).send(res);
+        });
+    }
     addTypeProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield service_type_product_1.default.addTypeProduct(req, res);

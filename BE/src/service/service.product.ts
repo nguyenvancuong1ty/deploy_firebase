@@ -27,7 +27,6 @@ class ProductService {
         const productRef = db.collection('products').doc(id);
         const doc = await productRef.get();
         let response: any = doc.data();
-        console.log('ID', id, 'response', response);
         const sale: object | string = response.sale ? await SaleService.getSale(response.sale) : '';
         response = { ...response, sale: sale };
         return response;
@@ -64,7 +63,6 @@ class ProductService {
     static async updateProduct(req: Request): Promise<object> {
         const { id } = req.params;
         const productRef = db.collection('products').doc(id);
-        console.log(req.body);
         const response = await productRef.update({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
         return response;
     }
@@ -78,8 +76,6 @@ class ProductService {
             .get(url)
             .then((response) => {
                 res.header('Access-Control-Allow-Origin', '*');
-                console.log(response.data);
-
                 return res.json(response.data && response.data.rows[0].elements[0].distance.value);
             })
             .catch((e) => {

@@ -31,9 +31,9 @@ class NotifyService {
             const querySnapshot = yield notifyQuery.where('isAll', '==', true).where('deleted', '==', false).get();
             const response = yield querySnapshot.docs.map((doc2) => __awaiter(this, void 0, void 0, function* () {
                 const notifyItem = doc2.data();
-                return Object.assign(Object.assign({}, notifyItem), { id: doc2.id });
+                const time = notifyItem.time.toMillis();
+                return Object.assign(Object.assign({}, notifyItem), { id: doc2.id, time });
             }));
-            console.log(response);
             return yield Promise.all(response);
         });
     }

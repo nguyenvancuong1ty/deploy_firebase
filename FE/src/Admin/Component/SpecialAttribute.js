@@ -18,7 +18,9 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
                     Array.isArray(b) &&
                     b.length > 0 &&
                     b.map(([key, value]) => {
-                        if (key !== 'quantity' && key !== 'price') return `${key}: ${value}`;
+                        if (key !== 'quantity' && key !== 'price') {
+                            return `${key}: ${value}`;
+                        }
                     });
                 let label = option.join(' - ');
                 if (label.startsWith(' - ')) {
@@ -31,7 +33,7 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
             });
         setLabels(labels);
     }, [productDetail]);
-    console.log('---', specialAttribute, '---');
+
     const onChange = (e) => {
         const specialAttributes = JSON.parse(e.target.value);
         setSpecialAttribute(specialAttributes);

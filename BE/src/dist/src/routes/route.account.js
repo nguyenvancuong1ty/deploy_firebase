@@ -21,4 +21,5 @@ accountRouter.post('/account/change-password/:email', authentication_1.authentic
 accountRouter.post('/registerNotify', (0, response_error_1.handleError)(accountController.registerNotify));
 accountRouter.post('/notify-all', (0, response_error_1.handleError)(accountController.notifyAll));
 accountRouter.get('/account', (0, authorization_1.authorization)(['admin']), (0, response_error_1.handleError)(accountController.getAllAccount));
+accountRouter.get('/unsubscribeFromTopic', (0, response_error_1.handleError)(accountController.unsubscribeFromTopic));
 exports.default = accountRouter;

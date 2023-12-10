@@ -35,18 +35,27 @@ function NotifyComponent({ page }) {
 
         setLoading(true);
         const notifyRef = collection(db, 'notify');
-        const queryRef = query(
-            notifyRef,
-            or(
-                and(
-                    where('user_id', '==', [localStorage.getItem('uid')]),
-                    where('deleted', '==', false),
-                    where('isAll', '==', false),
-                ),
-                and(where('isAll', '==', true), where('deleted', '==', false)),
-            ),
-        );
-
+        const queryRef =
+            localStorage.getItem('account') !== 'admin'
+                ? query(
+                      notifyRef,
+                      or(
+                          and(
+                              where('user_id', '==', [localStorage.getItem('uid')]),
+                              where('deleted', '==', false),
+                              where('isAll', '==', false),
+                          ),
+                          and(where('isAll', '==', true), where('deleted', '==', false)),
+                      ),
+                  )
+                : query(
+                      notifyRef,
+                      and(
+                          where('user_id', '==', [localStorage.getItem('uid')]),
+                          where('deleted', '==', false),
+                          where('isAll', '==', false),
+                      ),
+                  );
         const unsubscribe = onSnapshot(queryRef, (snapshot) => {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === 'added') {

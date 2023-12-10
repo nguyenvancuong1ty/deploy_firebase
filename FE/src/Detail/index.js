@@ -180,7 +180,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                 <Container>
                     <Row lg={2} md={2} sm={2} xl={2} xs={2} className="detail_component">
                         <Col>
-                            <Image alt="Img" src={primaryImage} className="detail_img" />
+                            <Image alt="Img" src={primaryImage} className="detail_img"/>
                             {/* <img alt="Img" src={primaryImage} width={380} height={380} className="detail_img" /> */}
                             <div className="sub__img">
                                 <div className="sub__imgs">

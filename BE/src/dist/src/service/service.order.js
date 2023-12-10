@@ -15,7 +15,7 @@ class OrderService {
         return __awaiter(this, void 0, void 0, function* () {
             const { type } = req.query;
             const orderRef = firebase_1.db.collection('order');
-            const querySnapshot = yield orderRef.where('status', '==', type).get();
+            const querySnapshot = type ? yield orderRef.where('status', '==', type).get() : yield orderRef.where('deleted', '==', false).get();
             const response = querySnapshot.docs.map((item) => {
                 return Object.assign(Object.assign({}, item.data()), { Id: item.id });
             });

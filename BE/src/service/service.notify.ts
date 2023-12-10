@@ -23,11 +23,11 @@ class NotifyService {
         const querySnapshot = await notifyQuery.where('isAll', '==', true).where('deleted', '==', false).get();
 
         const response = await querySnapshot.docs.map(async (doc2: any) => {
-            const notifyItem: Notify = doc2.data();
-            return { ...notifyItem, id: doc2.id };
+            const notifyItem: any = doc2.data();
+            const time = notifyItem.time.toMillis();
+            return { ...notifyItem, id: doc2.id, time };
         });
-        console.log(response);
-        
+
         return await Promise.all(response);
     }
     static async addNotifyOfUser(req: Request, res: Response): Promise<any> {

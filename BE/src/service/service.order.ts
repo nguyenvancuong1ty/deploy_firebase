@@ -6,7 +6,8 @@ class OrderService {
     static async getAllOrder(req: Request, res: Response): Promise<Array<Order | any>> {
         const { type } = req.query;
         const orderRef = db.collection('order');
-        const querySnapshot = await orderRef.where('status', '==', type).get();
+
+        const querySnapshot = type ? await orderRef.where('status', '==', type).get() : await orderRef.where('deleted', '==', false).get();
 
         const response = querySnapshot.docs.map((item: any) => {
             return { ...item.data(), Id: item.id };
@@ -107,7 +108,7 @@ class OrderService {
                 await docRef.update({
                     id_user_shipper,
                     status,
-                    start_shipping_date: Timestamp.fromDate(new Date()),    
+                    start_shipping_date: Timestamp.fromDate(new Date()),
                 });
                 return true;
             }

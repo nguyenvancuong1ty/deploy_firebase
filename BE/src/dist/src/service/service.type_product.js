@@ -23,9 +23,17 @@ class TypeProductService {
             return response;
         });
     }
+    static updateTypeProduct(req) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const typeRef = firebase_1.db.collection('type_product').doc(id);
+            const response = yield typeRef.update(Object.assign({}, req.body));
+            return response;
+        });
+    }
     static addTypeProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const response = yield firebase_1.db.collection('products').add(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
+            const response = yield firebase_1.db.collection('type_product').add(Object.assign(Object.assign({}, req.body), { deleted: false }));
             return response;
         });
     }

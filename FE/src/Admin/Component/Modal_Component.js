@@ -13,6 +13,8 @@ import LoadingSpin from '~/Loading/Loading.spin';
 import SpecialAttribute from './SpecialAttribute';
 function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDetail, setReRender, reRender, product }) {
     const [sale, setSale] = useState(null);
+    const [typeProduct, setTypeProduct] = useState(null);
+    const [expiryDate, setExpiryDate] = useState(null);
     const [uploadChangeThumb, setUploadChangeThumb] = useState(false);
     const [uploadChangeListImages, setUploadChangeListImages] = useState(false);
     useEffect(() => {
@@ -30,6 +32,12 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         };
         fetchData();
     }, []);
+
+    useEffect(() => {
+        productDetail && productDetail.expiryDate
+            ? setExpiryDate(dayjs(productDetail.expiryDate._seconds * 1000 || productDetail.expiryDate))
+            : setExpiryDate(null);
+    }, [productDetail]);
 
     const handleUpdateClick = async (type) => {
         let payload = Object.entries(productDetail); // Chuyển đổi object xang mảng gồm key và value
@@ -74,15 +82,30 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
             });
         }
     };
-    const handleDetailChange = (e) => {
-        const { name, value } = e.target;
-        setProductDetail((prev) => {
-            return { ...prev, [name]: value };
-        });
+
+    useEffect(() => {
+        axios({
+            url: `${process.env.REACT_APP_API_URL}/type/product`,
+            method: 'get',
+        })
+            .then((res) => {
+                setTypeProduct(res.data.metadata);
+            })
+            .catch((e) => alert(e.message));
+    }, []);
+
+    const getTypeProductOptions = () => {
+        const types =
+            typeProduct &&
+            typeProduct.map((item) => {
+                return {
+                    value: item.name,
+                    label: item.vnl,
+                };
+            });
+        return types;
     };
-    const getALlTypeProduct = (product) => {
-        return [...new Set(product.map((item) => item.type))];
-    };
+
     const getSaleOptions = () => {
         const sales = sale.map((item) => {
             return {
@@ -91,6 +114,13 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
             };
         });
         return sales;
+    };
+
+    const handleDetailChange = (e) => {
+        const { name, value } = e.target;
+        setProductDetail((prev) => {
+            return { ...prev, [name]: value };
+        });
     };
 
     const handleThumbChange = async (e) => {
@@ -102,6 +132,7 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         });
         setUploadChangeThumb(false);
     };
+
     const handleListImgChange = async (e) => {
         setUploadChangeListImages(true);
         const { name } = e.target;
@@ -114,6 +145,7 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         });
         setUploadChangeListImages(false);
     };
+
     const uploadFile = async (e) => {
         const file = e.target.files[0];
         if (!file) return Promise.resolve('');
@@ -144,19 +176,24 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
             );
         });
     };
+
     const handleExpiryDateChange = (value) => {
+        const expiryDate = 'expiryDate';
+        setExpiryDate(value);
         if (value) {
-            console.log(value);
             const time = value.$d.getTime();
             console.log(time);
             value &&
                 setProductDetail((prev) => {
-                    return { ...prev, ['expiryDate']: time };
+                    return { ...prev, [expiryDate]: time };
                 });
+        } else {
+            setProductDetail((prev) => {
+                return { ...prev, [expiryDate]: value };
+            });
         }
     };
 
-    console.log(productDetail);
     return (
         <Modal
             title="Chi tiết sản phẩm"
@@ -221,16 +258,22 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                             </div>
                             <div className="product__detail--item">
                                 <b>Kiểu: </b>
-                                <select
+                                <Select
                                     name="type"
-                                    className="select__type"
                                     value={productDetail.type}
-                                    onChange={(e) => handleDetailChange(e)}
-                                >
-                                    {getALlTypeProduct(product).map((item, index) => {
-                                        return <option key={index}> {item}</option>;
-                                    })}
-                                </select>
+                                    style={{
+                                        width: 150,
+                                    }}
+                                    onChange={(e) =>
+                                        setProductDetail((prev) => {
+                                            return {
+                                                ...prev,
+                                                type: e,
+                                            };
+                                        })
+                                    }
+                                    options={getTypeProductOptions()}
+                                />
                             </div>
                         </Col>
                         <Col>
@@ -295,21 +338,14 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                                     onChange={(e) => handleDetailChange(e)}
                                 />
                             </div>
-                            {productDetail.expiryDate && (
+                            {
                                 <div className="product__detail--item">
                                     <b>Hạn sử dụng: </b>
                                     <Space direction="vertical" size={12}>
-                                        <DatePicker
-                                            format={'YYYY-MM-DD HH:mm:ss'}
-                                            value={dayjs(
-                                                productDetail.expiryDate._seconds * 1000 || productDetail.expiryDate,
-                                            )}
-                                            showTime
-                                            onChange={handleExpiryDateChange}
-                                        />
+                                        <DatePicker value={expiryDate} showTime onChange={handleExpiryDateChange} />
                                     </Space>
                                 </div>
-                            )}
+                            }
                         </Col>
                     </Row>
                     <Row className="product_detail">

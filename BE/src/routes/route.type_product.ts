@@ -13,5 +13,6 @@ const typeProductController = new TypeProductController();
 
 //routes
 typeProductRouter.get('/type/product', handleError(typeProductController.getAllTypeProduct));
+typeProductRouter.put('/type/product/:id', handleError(typeProductController.updateTypeProduct));
 typeProductRouter.post('/type/product', authentication, authorization('admin'), handleError(typeProductController.addTypeProduct));
 export default typeProductRouter;

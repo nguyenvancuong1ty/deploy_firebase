@@ -15,8 +15,16 @@ class TypeProductService {
         return response;
     }
 
+    static async updateTypeProduct(req: Request): Promise<Product> {
+        const { id } = req.params;
+        const typeRef = db.collection('type_product').doc(id);
+        const response = await typeRef.update({ ...req.body });
+        return response;
+    }
+
     static async addTypeProduct(req: Request, res: Response): Promise<Product> {
-        const response = await db.collection('products').add({ ...req.body, timeCreate: Timestamp.fromDate(new Date()) });
+        const response = await db.collection('type_product').add({ ...req.body, deleted: false });
+
         return response;
     }
 }

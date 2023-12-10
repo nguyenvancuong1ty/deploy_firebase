@@ -242,3 +242,12 @@ span.ant-avatar.ant-avatar-circle.ant-avatar-image.css-dev-only-do-not-override-
     width: 54px;
     height: 54px;
 }
+
+.btn__add--type--product {
+    margin: 12px 0;
+}
+
+.notify__page--head {
+    display: flex;
+    justify-content: space-between;
+}

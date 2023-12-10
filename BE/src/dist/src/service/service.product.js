@@ -36,7 +36,6 @@ class ProductService {
             const productRef = firebase_1.db.collection('products').doc(id);
             const doc = yield productRef.get();
             let response = doc.data();
-            console.log('ID', id, 'response', response);
             const sale = response.sale ? yield service_sale_1.default.getSale(response.sale) : '';
             response = Object.assign(Object.assign({}, response), { sale: sale });
             return response;
@@ -76,7 +75,6 @@ class ProductService {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const productRef = firebase_1.db.collection('products').doc(id);
-            console.log(req.body);
             const response = yield productRef.update(Object.assign(Object.assign({}, req.body), { timeCreate: firebase_1.Timestamp.fromDate(new Date()) }));
             return response;
         });
@@ -91,7 +89,6 @@ class ProductService {
                 .get(url)
                 .then((response) => {
                 res.header('Access-Control-Allow-Origin', '*');
-                console.log(response.data);
                 return res.json(response.data && response.data.rows[0].elements[0].distance.value);
             })
                 .catch((e) => {

@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Admin.css';
-import { faBars, faBell, faGauge, faHouse, faUsers, faWarehouse } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faBell, faFilter, faGauge, faHouse, faMoneyBill, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import ProductPage from './Product';
@@ -16,6 +16,9 @@ import Info from './Info';
 import confirm from 'antd/es/modal/confirm';
 import { useDispatch } from 'react-redux';
 import HandleLogout from '~/until/handleLogout';
+import TypeProduct from './TypeProduct';
+import ImportProductPage from './ImportProductPage';
+import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
 
 function Admin() {
     const [showNav, setShowNav] = useState(true);
@@ -26,24 +29,24 @@ function Admin() {
 
     const nav = [
         {
-            title: 'Home',
+            title: 'Trang chủ',
             icon: (
                 <FontAwesomeIcon icon={faHouse} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
             ),
             link: 'dashboard',
         },
+        // {
+        //     title: 'Dashboard',
+        //     icon: (
+        //         <FontAwesomeIcon icon={faGauge} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
+        //     ),
+        //     link: 'dashboard',
+        // },
         {
-            title: 'Dashboard',
-            icon: (
-                <FontAwesomeIcon icon={faGauge} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
-            ),
-            link: 'dashboard',
-        },
-        {
-            title: 'Product',
+            title: 'Sản phẩm',
             icon: (
                 <FontAwesomeIcon
-                    icon={faWarehouse}
+                    icon={faProductHunt}
                     style={{ color: '#4daf46' }}
                     size="xl"
                     className="admin__nav--icon"
@@ -52,16 +55,35 @@ function Admin() {
             link: 'product',
         },
         {
-            title: 'Notify',
+            title: 'Thông báo',
             icon: <FontAwesomeIcon icon={faBell} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />,
             link: 'notify',
         },
         {
-            title: 'Account',
+            title: 'Tài khoản',
             icon: (
                 <FontAwesomeIcon icon={faUsers} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
             ),
             link: 'account',
+        },
+        {
+            title: 'Loại sản phẩm',
+            icon: (
+                <FontAwesomeIcon icon={faFilter} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
+            ),
+            link: 'type',
+        },
+        {
+            title: 'Nhập hàng',
+            icon: (
+                <FontAwesomeIcon
+                    icon={faMoneyBill}
+                    style={{ color: '#4daf46' }}
+                    size="xl"
+                    className="admin__nav--icon"
+                />
+            ),
+            link: 'import--product',
         },
     ];
     const items = [
@@ -209,6 +231,11 @@ function Admin() {
                         <Route path="/notify" element={<NotifyPage product={product}></NotifyPage>} />
                         <Route path="/account" element={<AccountPage account={account}></AccountPage>} />
                         <Route path="/info" element={<Info account={account}></Info>} />
+                        <Route path="/type" element={<TypeProduct account={account}></TypeProduct>} />
+                        <Route
+                            path="/import--product"
+                            element={<ImportProductPage account={account}></ImportProductPage>}
+                        />
                         <Route
                             path="/dashboard"
                             element={
