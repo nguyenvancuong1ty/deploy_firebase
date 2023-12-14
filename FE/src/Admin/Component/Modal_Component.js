@@ -11,8 +11,9 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
 import LoadingSpin from '~/Loading/Loading.spin';
 import SpecialAttribute from './SpecialAttribute';
-function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDetail, setReRender, reRender, product }) {
+function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDetail, setReRender, reRender }) {
     const [sale, setSale] = useState(null);
+    const [quantityAll, setQuantityAll] = useState(0);
     const [typeProduct, setTypeProduct] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
     const [uploadChangeThumb, setUploadChangeThumb] = useState(false);
@@ -37,8 +38,14 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         productDetail && productDetail.expiryDate
             ? setExpiryDate(dayjs(productDetail.expiryDate._seconds * 1000 || productDetail.expiryDate))
             : setExpiryDate(null);
+        const totalQuantity =
+            productDetail &&
+            productDetail.attribute &&
+            productDetail.attribute.reduce((total, item) => {
+                return total + item.quantity;
+            }, 0);
+        setQuantityAll(totalQuantity);
     }, [productDetail]);
-
     const handleUpdateClick = async (type) => {
         let payload = Object.entries(productDetail); // Chuyển đổi object xang mảng gồm key và value
         payload = payload.filter(([key, value]) => {
@@ -194,16 +201,24 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
         }
     };
 
+    console.log('productDetail', productDetail);
     return (
         <Modal
             title="Chi tiết sản phẩm"
             centered
             open={modalOpen}
-            onCancel={() => setModalOpen(false)}
+            onCancel={() => {
+                setModalOpen(false);
+            }}
             width={1000}
             style={{ background: '#292929' }}
             footer={[
-                <Button key="cancel" onClick={() => setModalOpen(false)}>
+                <Button
+                    key="cancel"
+                    onClick={() => {
+                        setModalOpen(false);
+                    }}
+                >
                     Cancel
                 </Button>,
                 <Button key="add" onClick={() => handleUpdateClick('add')}>
@@ -292,7 +307,7 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                             <div className="product__detail--item">
                                 <b>Giảm giá: </b>
                                 <Select
-                                    value={`${productDetail.sale.percent || 0}%`}
+                                    value={productDetail.sale ? `${productDetail.sale.percent}%` : `${0}%`}
                                     style={{
                                         width: 120,
                                     }}
@@ -310,9 +325,10 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                             <div className="product__detail--item">
                                 <b>Số lượng: </b>
                                 <input
+                                    readOnly={quantityAll ? true : false}
                                     name="quantity"
                                     type="number"
-                                    value={productDetail.quantity}
+                                    value={quantityAll || productDetail.quantity}
                                     onChange={(e) => handleDetailChange(e)}
                                 />
                             </div>
@@ -355,6 +371,7 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
                         <div className="product__detail--item description">
                             <b>Mô tả: </b>
                             <textarea
+                                style={{ padding: 8 }}
                                 rows="8"
                                 name="detail"
                                 value={productDetail.detail}

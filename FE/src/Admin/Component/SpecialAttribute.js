@@ -1,12 +1,17 @@
-import { Radio } from 'antd';
+import { Button, Input, Modal, Radio, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
+import AttributeAdd from './AttributeAdd';
 
 function SpecialAttribute({ productDetail, setProductDetail }) {
     const [labels, setLabels] = useState(null);
     const [specialAttributeQuantity, setSpecialAttributeQuantity] = useState(null);
     const [specialAttributePrice, setSpecialAttributePrice] = useState(null);
-    const [specialAttribute, setSpecialAttribute] = useState({});
+    const [specialAttribute, setSpecialAttribute] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [enablePrice, setEnablePrice] = useState(false);
+    const [rows, setRows] = useState([{ id: 1 }]);
+    const [newAttribute, setNewAttribute] = useState({});
     useEffect(() => {
         const labels =
             productDetail &&
@@ -33,7 +38,11 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
             });
         setLabels(labels);
     }, [productDetail]);
-
+    useEffect(() => {
+        setSpecialAttributeQuantity(null);
+        setSpecialAttributePrice(null);
+        setSpecialAttribute(null);
+    }, [productDetail.Id]);
     const onChange = (e) => {
         const specialAttributes = JSON.parse(e.target.value);
         setSpecialAttribute(specialAttributes);
@@ -73,28 +82,59 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
             return { ...prev, attribute: newListSpecialAttributes };
         });
     };
+
+    const handleRemove = () => {
+        const newListSpecialAttributes = productDetail.attribute.filter((item) => {
+            return JSON.stringify(item) !== JSON.stringify(specialAttribute);
+        });
+        setProductDetail((prev) => {
+            return { ...prev, attribute: newListSpecialAttributes };
+        });
+        setSpecialAttribute(null);
+    };
+
+    const handleAddRow = () => {
+        const newRow = { id: rows.length + 1 };
+        setRows([...rows, newRow]);
+    };
+
     return (
         <div className="product__detail--item">
             <b>Thuộc tính riêng: </b>
-            {Array.isArray(labels) && labels.length > 0 && (
-                <Container>
-                    <Radio.Group
-                        value={JSON.stringify(specialAttribute)}
-                        buttonStyle="solid"
-                        style={{
-                            marginTop: 16,
-                        }}
-                        onChange={onChange}
-                    >
-                        {labels.map((item, index) => {
+            <Button disabled={specialAttribute ? false : true} onClick={handleRemove}>
+                Xóa
+            </Button>
+            <Container>
+                <Radio.Group
+                    value={JSON.stringify(specialAttribute)}
+                    buttonStyle="solid"
+                    style={{
+                        marginTop: 16,
+                    }}
+                    onChange={onChange}
+                >
+                    {Array.isArray(labels) &&
+                        labels.length > 0 &&
+                        labels.map((item, index) => {
                             return (
-                                <Radio.Button key={index} value={item.value}>
+                                <Radio.Button key={index} value={item.value} style={{ minWidth: 200 }}>
                                     {item.label}
                                 </Radio.Button>
                             );
                         })}
-                    </Radio.Group>
-                    {specialAttribute.quantity && (
+                    <Tooltip title="Thêm loại">
+                        <Button
+                            onClick={() => {
+                                setModalOpen(true);
+                            }}
+                        >
+                            +
+                        </Button>
+                    </Tooltip>
+                </Radio.Group>
+
+                <div>
+                    {productDetail.attribute && specialAttribute && specialAttribute.quantity && (
                         <>
                             <b>Số lượng: </b>
                             <input
@@ -105,7 +145,7 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
                             />
                         </>
                     )}
-                    {specialAttribute.price && (
+                    {productDetail.attribute && specialAttribute && specialAttribute.price && (
                         <>
                             <b>Giá: </b>
                             <input
@@ -116,8 +156,91 @@ function SpecialAttribute({ productDetail, setProductDetail }) {
                             />
                         </>
                     )}
-                </Container>
-            )}
+                </div>
+            </Container>
+            <Modal
+                title="Thêm mới thuộc tính"
+                centered
+                open={modalOpen}
+                onCancel={() => setModalOpen(false)}
+                width={1400}
+                style={{ background: '#292929' }}
+                footer={[
+                    <Button
+                        key="cancel"
+                        onClick={() => {
+                            setModalOpen(false);
+                            setNewAttribute({});
+                            setRows([{ id: 1 }]);
+                        }}
+                    >
+                        Cancel
+                    </Button>,
+                    <Button
+                        key="add"
+                        onClick={() => {
+                            setProductDetail((prev) => {
+                                return { ...prev, attribute: [...productDetail.attribute, newAttribute] };
+                            });
+                            setModalOpen(false);
+                            setNewAttribute({});
+                        }}
+                    >
+                        Thêm mới
+                    </Button>,
+                ]}
+            >
+                <Row>
+                    <Col xs={8}>
+                        {rows.map((row) => (
+                            <AttributeAdd key={row.id} setNewAttribute={setNewAttribute} />
+                        ))}
+                        <Row>
+                            <Tooltip title="Trường này là bắt buộc">
+                                <Col>
+                                    <label htmlFor="att">Số lượng</label>
+                                    <Input
+                                        type="number"
+                                        placeholder="Trường này là bắt buộc"
+                                        onChange={(e) => {
+                                            setNewAttribute((prev) => {
+                                                return { ...prev, quantity: e.target.value * 1 };
+                                            });
+                                        }}
+                                    ></Input>
+                                </Col>
+                            </Tooltip>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <label htmlFor="att">Giá</label>
+                                <div className="d-flex">
+                                    <Input
+                                        type="number"
+                                        disabled={!enablePrice}
+                                        onChange={(e) =>
+                                            setNewAttribute((prev) => {
+                                                return { ...prev, price: e.target.value * 1 };
+                                            })
+                                        }
+                                    ></Input>
+                                    <Button onClick={() => setEnablePrice(true)}>Thêm giá</Button>
+                                </div>
+                            </Col>
+                        </Row>
+                        <Tooltip title="Thêm cặp thuộc tính, giá trị">
+                            <Button onClick={handleAddRow} className="mt-4">
+                                +
+                            </Button>
+                        </Tooltip>
+                    </Col>
+                    <Col className="bg-dark text-light rounded fs-5">
+                        <pre>
+                            <code> {JSON.stringify(newAttribute, null, 2)}</code>
+                        </pre>
+                    </Col>
+                </Row>
+            </Modal>
         </div>
     );
 }

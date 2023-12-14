@@ -54,7 +54,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
     useEffect(() => {
         if (data) {
             setPrimaryImage(data.images);
-            setRemainingProduct(data.quantity - data.sold);
+            setRemainingProduct(data.quantity);
             setRealPrice(getRealPrice(data));
             setInitialPrice(data.price);
         }
@@ -140,7 +140,9 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                     Array.isArray(b) &&
                     b.length > 0 &&
                     b.map(([key, value]) => {
-                        if (key !== 'quantity' && key !== 'price') return `${key}: ${value}`;
+                        if (key !== 'quantity' && key !== 'price') {
+                            return `${key}: ${value}`;
+                        }
                     });
                 let label = option.join(' - ');
                 if (label.startsWith(' - ')) {
@@ -156,13 +158,17 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
 
     const onChange = (e) => {
         const attribute = JSON.parse(e.target.value);
+        console.log(attribute.price, 'data.price', data.price);
         setAttribute(attribute);
+        if (attribute.quantity) {
+            setRemainingProduct(attribute.quantity);
+        }
         if (attribute.price) {
             setInitialPrice(attribute.price);
             setRealPrice(getRealPrice(data, attribute.price));
-        }
-        if (attribute.quantity) {
-            setRemainingProduct(attribute.quantity);
+        } else {
+            setInitialPrice(data.price);
+            setRealPrice(getRealPrice(data, data.price));
         }
     };
     useEffect(() => {
@@ -180,8 +186,9 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                 <Container>
                     <Row lg={2} md={2} sm={2} xl={2} xs={2} className="detail_component">
                         <Col>
-                            <Image alt="Img" src={primaryImage} className="detail_img"/>
-                            {/* <img alt="Img" src={primaryImage} width={380} height={380} className="detail_img" /> */}
+                            <div className="detail_img">
+                                <Image alt="Img" src={primaryImage} width={380} height={380} />
+                            </div>
                             <div className="sub__img">
                                 <div className="sub__imgs">
                                     {data.image &&

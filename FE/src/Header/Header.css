@@ -274,3 +274,9 @@ b {
         transform: rotate(0deg);
     }
 }
+
+.Register__text {
+    text-align: center;
+    color: var(--primary-color--);
+    margin-bottom: 16px;
+}

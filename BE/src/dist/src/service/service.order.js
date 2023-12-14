@@ -52,7 +52,7 @@ class OrderService {
     }
     static addOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { uid, shipping_address, detail, weight, shipping_cost, total_amount } = req.body;
+            const { uid, shipping_address, detail, weight, shipping_cost, total_amount, phoneNumber } = req.body;
             const newOrder = {
                 deleted: false,
                 detail: detail,
@@ -61,6 +61,7 @@ class OrderService {
                 shipping_address: shipping_address,
                 status: 'pending',
                 weight: weight,
+                phoneNumber: phoneNumber,
                 id_user_shipper: '',
                 shipping_cost: shipping_cost * 1,
                 order_date: firebase_1.Timestamp.fromDate(new Date()),
@@ -133,6 +134,7 @@ class OrderService {
     }
     static notifyForOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Dô');
             if (req.body.status === 'shipping') {
                 const message = {
                     data: {

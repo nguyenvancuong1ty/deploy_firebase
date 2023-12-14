@@ -3,11 +3,6 @@
     /* min-height: 100vh; */
 }
 
-.detail_img {
-    margin: 0 auto;
-    display: block;
-}
-
 .sub__img {
     width: 380px;
     margin: 12px auto;
@@ -59,10 +54,9 @@ select {
 }
 
 .detail_img {
-    width: 380px !important;
-    height: 380px !important;
     object-fit: cover;
-    margin: 0 auto;
+    display: flex;
+    justify-content: center;
 }
 
 .ant-image.css-dev-only-do-not-override-w8mnev {
@@ -171,13 +165,10 @@ select {
 .detail_info--footer {
     margin-right: 18px;
 }
-
-.ant-image.css-dev-only-do-not-override-1w4v3hc {
-    display: block;
-}
+/* 
 .ant-image.css-dev-only-do-not-override-1g853jt {
     display: block;
-}
+} */
 span.ant-radio-button.ant-radio-button-checked {
     background: #ff4040 !important;
 }

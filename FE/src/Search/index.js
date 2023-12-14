@@ -61,7 +61,7 @@ function Search() {
             <div className="header-input">
                 <input
                     type="text"
-                    placeholder="Enter name product"
+                    placeholder="Nhập tên sản phẩm..."
                     value={textInput}
                     onChange={(e) => {
                         handleSearch(e);

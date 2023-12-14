@@ -50,7 +50,7 @@ class OrderService {
     }
 
     static async addOrder(req: Request, res: Response): Promise<Order | any> {
-        const { uid, shipping_address, detail, weight, shipping_cost, total_amount } = req.body;
+        const { uid, shipping_address, detail, weight, shipping_cost, total_amount, phoneNumber } = req.body;
         const newOrder: Order = {
             deleted: false,
             detail: detail,
@@ -59,6 +59,7 @@ class OrderService {
             shipping_address: shipping_address,
             status: 'pending',
             weight: weight,
+            phoneNumber: phoneNumber,
             id_user_shipper: '',
             shipping_cost: shipping_cost * 1,
             order_date: Timestamp.fromDate(new Date()),
@@ -129,6 +130,8 @@ class OrderService {
     }
 
     static async notifyForOrder(req: Request, res: Response) {
+        console.log('Dô');
+
         if (req.body.status === 'shipping') {
             const message: object = {
                 data: {

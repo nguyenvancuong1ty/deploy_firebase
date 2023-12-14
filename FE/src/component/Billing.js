@@ -3,30 +3,53 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input, Modal, Space, Spin, Tooltip } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 const Billing = ({ product, total, setShowBilling }) => {
-    const [address, setAddress] = useState(localStorage.getItem('address'));
-    const account = useSelector((state) => state.AuthReducer.Auth);
+    const [address, setAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [distance, setDistance] = useState(0);
     const [totalShippingCost, setTotalShippingCost] = useState(0);
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const ref = useRef();
+    useEffect(() => {
+        const info = sessionStorage.getItem('reduxAuthState');
+        setAddress(JSON.parse(info).address);
+        setPhoneNumber(JSON.parse(info).phoneNumber);
+    }, []);
     const handleAddress = () => {
         if (address.length === 0) {
             ref.current.focus();
         } else {
-            axios({
-                method: 'get',
-                url: `${process.env.REACT_APP_API_URL}/product/distance?origin=${address}&destination=394 Mỹ Đình 1, Hà Nội`,
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }).then((res) => {
-                setDistance(res.data / 1000);
-            });
+            const geocodingApiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+                address,
+            )}.json?access_token=pk.eyJ1Ijoia2llbWdvIiwiYSI6ImNscTVobGZjaTBpdW8ybG52aWdwcDNmZGgifQ._OPGMkxjlbcoK1sLv9ql5w`;
+
+            axios
+                .get(geocodingApiUrl)
+                .then((response) => {
+                    const data = response.data;
+                    if (data.features.length > 0) {
+                        const location = data.features[0].center;
+                        console.log({ latitude: location[1], longitude: location[0] });
+                        axios({
+                            method: 'get',
+                            url: `${process.env.REACT_APP_API_URL}/product/distance?&destination=${location[1]},${location[0]}`,
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                            },
+                        }).then((res) => {
+                            console.log(res);
+                            setDistance(res.data);
+                        });
+                    } else {
+                        console.error('Không tìm thấy địa điểm.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi geocoding:', error);
+                });
         }
     };
 
@@ -66,6 +89,7 @@ const Billing = ({ product, total, setShowBilling }) => {
             const data = {
                 uid: element.uid,
                 shipping_address: address,
+                phoneNumber: phoneNumber,
                 weight: element.product.weight * element.quantity,
                 shipping_cost: itemShippingCost,
                 total_amount: Math.floor(
@@ -109,7 +133,7 @@ const Billing = ({ product, total, setShowBilling }) => {
     const notifySuccess = () => {
         toast.success('Đặt hàng thành công !', { position: toast.POSITION.TOP_CENTER });
     };
-   
+
     return (
         <div className="billing-wrapper">
             <h2>Hóa đơn</h2>
@@ -125,8 +149,8 @@ const Billing = ({ product, total, setShowBilling }) => {
                 <Input
                     placeholder="Số điện thoại"
                     // ref={ref}
-                    value={account.phoneNuber || ''}
-                    onChange={(e) => setAddress(e.target.value)}
+                    value={phoneNumber || ''}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                 />
                 <Input
                     placeholder="Địa chỉ giao hàng"
@@ -163,7 +187,7 @@ const Billing = ({ product, total, setShowBilling }) => {
                 <tbody>
                     {product.map((item, index) => {
                         const itemShippingCost = getShipCost(item, distance);
-                       
+
                         return (
                             <tr key={index}>
                                 <td>

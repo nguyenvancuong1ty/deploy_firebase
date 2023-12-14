@@ -72,7 +72,7 @@ function Register({ setShow, setUid, setShowRegister }) {
                     }}
                     onFinish={onFinish}
                 >
-                    <h1>Register</h1>
+                    <h3 className='Register__text'>Đăng ký</h3>
                     <Form.Item
                         name="email"
                         rules={[
@@ -124,7 +124,7 @@ function Register({ setShow, setUid, setShowRegister }) {
                             }}
                         >
                             <Button type="primary" className="confirm-form-button" onClick={handleConfirmEmail}>
-                                Confirm email
+                                xác thực email
                             </Button>
                             <Input
                                 prefix={<QrcodeOutlined className="site-form-item-icon" />}
@@ -145,7 +145,7 @@ function Register({ setShow, setUid, setShowRegister }) {
                         <Input.Password
                             prefix={<LockOutlined className="site-form-item-icon" />}
                             type="password"
-                            placeholder="Password"
+                            placeholder="mật khẩu"
                             current-password="true"
                             disabled={disabled}
                         />
@@ -162,14 +162,14 @@ function Register({ setShow, setUid, setShowRegister }) {
                         <Input.Password
                             prefix={<LockOutlined className="site-form-item-icon" />}
                             type="password"
-                            placeholder="Confirm password"
+                            placeholder="Nhập lại mật khẩu"
                             current-password="true"
                             disabled={disabled}
                         />
                     </Form.Item>
                     <Form.Item>
                         <a className="login-form-forgot" href="/">
-                            Forgot password
+                            Quên mật khẩu
                         </a>
                     </Form.Item>
                     <Form.Item
@@ -182,16 +182,16 @@ function Register({ setShow, setUid, setShowRegister }) {
                         className="res_form"
                     >
                         <Button type="primary" htmlType="submit" className="login-form-button" disabled={disabled}>
-                            Register
+                            Đăng ký
                         </Button>
-                        <span style={{ margin: '0 16px' }}>Or</span>{' '}
+                        <span style={{ margin: '0 16px' }}>hoặc</span>{' '}
                         <b
                             style={{ color: 'var(--primary-color--)', cursor: 'pointer' }}
                             onClick={() => {
                                 setShowRegister(false);
                             }}
                         >
-                            Login
+                            Đăng nhập
                         </b>
                     </Form.Item>
                     {loading && (

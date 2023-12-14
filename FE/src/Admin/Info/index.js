@@ -8,7 +8,7 @@ function Info({ account }) {
 
     useEffect(() => {
         const me = account.find((item) => {
-            return (item.Id = localStorage.getItem('uid'));
+            return (item.Id === localStorage.getItem('uid'));
         });
         if (!me || me.length <= 0) {
             return;

@@ -13,7 +13,7 @@ dayjs.extend(customParseFormat);
 function ProductPage() {
     const [product, setProduct] = useState([]);
     const [data, setData] = useState(product);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
     const [productDetail, setProductDetail] = useState(null);
@@ -28,14 +28,14 @@ function ProductPage() {
                     url: `${process.env.REACT_APP_API_URL}/product/search`,
                 });
                 setProduct(res.data.metadata);
+                setLoading(false);
             } catch {}
-            setLoading(false);
         };
         fetchData();
     }, [reRender]);
     const confirm = async (Id) => {
         try {
-            const response = await axios({
+            await axios({
                 method: 'patch',
                 url: `${process.env.REACT_APP_API_URL}/product/delete/${Id}`,
                 headers: {
@@ -199,11 +199,6 @@ function ProductPage() {
         return { marginBottom: 0, background: color };
     };
     useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-        }, 500);
-    }, []);
-    useEffect(() => {
         const settingData = () => {
             const newData = product.map((item) => {
                 return {
@@ -227,11 +222,10 @@ function ProductPage() {
     const handleChange = (pagination, filters, sorter) => {
         setFilteredInfo(filters);
     };
-
+    console.log(loading);
     return (
         <div className="admin__wrap--content">
             <Container>
-                {' '}
                 {loading ? (
                     <LoadingAntd subClass="subLoading" foreignClass="foreignClass" />
                 ) : (
@@ -240,7 +234,7 @@ function ProductPage() {
                         columns={columns}
                         dataSource={data}
                         scroll={{
-                            x: 1600,
+                            x: 1500,
                             y: 600,
                         }}
                     />

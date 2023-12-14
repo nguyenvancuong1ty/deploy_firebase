@@ -6,6 +6,7 @@ interface Order {
     shipped_date: object;
     shipping_address: string;
     shipping_cost: number;
+    phoneNumber: string;
     start_shipping_date: object;
     status: string;
     total_amount: number;

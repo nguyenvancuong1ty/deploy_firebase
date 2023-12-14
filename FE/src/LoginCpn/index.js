@@ -108,15 +108,14 @@ const LoginCpn = ({ setShow, setUid }) => {
                                 </Form.Item>
                                 <Form.Item>
                                     <Form.Item name="remember" valuePropName="checked" noStyle>
-                                        <Checkbox>Remember me</Checkbox>
+                                        <Checkbox>Nhớ tài khoản</Checkbox>
                                     </Form.Item>
 
                                     <a className="login-form-forgot" href="/" style={{ color: 'red' }}>
-                                        Forgot password
+                                        quên mật khẩu
                                     </a>
                                 </Form.Item>
                                 <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100% ' }}>
-                                    <LoginFacebook setShow={setShow} setUid={setUid} />
                                     <LoginGoogle setShow={setShow} setUid={setUid} />
                                     <LoginGithub setShow={setShow} setUid={setUid} />
                                 </div>
@@ -129,16 +128,16 @@ const LoginCpn = ({ setShow, setUid }) => {
                                     }}
                                 >
                                     <Button type="primary" htmlType="submit" className="login-form-button">
-                                        Log in
+                                        Đăng nhập
                                     </Button>
-                                    <span style={{ margin: '0 16px' }}>Or</span>{' '}
+                                    <span style={{ margin: '0 16px' }}>hoặc</span>{' '}
                                     <b
                                         style={{ color: 'var(--primary-color--)', cursor: 'pointer' }}
                                         onClick={() => {
                                             setShowRegister(true);
                                         }}
                                     >
-                                        register now!
+                                        Đăng ký!
                                     </b>
                                 </Form.Item>
                             </Form>

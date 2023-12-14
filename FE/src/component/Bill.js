@@ -21,23 +21,24 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
             return total + item.shipping_cost;
         }, 0);
     };
+    console.log(items, type);
     const handleChangeTimePicker = (value) => {
         const newData = items.filter((item) => {
             if (value) {
                 if (type === 'pending')
                     return (
-                        item.order_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.order_date.seconds * 1000 < value[1].$d.getTime()
+                        item.order_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.order_date._seconds * 1000 < value[1].$d.getTime()
                     );
                 if (type === 'shipping')
                     return (
-                        item.start_shipping_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.start_shipping_date.seconds * 1000 < value[1].$d.getTime()
+                        item.start_shipping_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.start_shipping_date._seconds * 1000 < value[1].$d.getTime()
                     );
                 if (type === 'shipped')
                     return (
-                        item.shipped_date.seconds * 1000 >= value[0].$d.getTime() &&
-                        item.shipped_date.seconds * 1000 < value[1].$d.getTime()
+                        item.shipped_date._seconds * 1000 >= value[0].$d.getTime() &&
+                        item.shipped_date._seconds * 1000 < value[1].$d.getTime()
                     );
             } else {
                 return item;
@@ -51,6 +52,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
         confirm({
             zIndex: 9999,
             title: 'Nhận đơn',
+            centered: true,
             content: 'Nhận hàng bạn phải chịu toàn bộ trách nhiệm với đơn hàng này?',
             onOk() {
                 setLoading(true);
@@ -92,6 +94,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
         confirm({
             zIndex: 9999,
             title: 'Giao hàng thành công',
+            centered: true,
             content: 'Bạn đã giao hành thành công chưa?',
             onOk() {
                 setLoading(true);
@@ -136,6 +139,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
         confirm({
             zIndex: 9999,
             title: 'Hủy đơn hàng',
+            centered: true,
             content: 'Bạn muốn hủy giao đơn hàng ?',
             onOk() {
                 setLoading(true);

@@ -87,23 +87,25 @@ function NotifyPage({ product, account, order, ordered }) {
                                     Gửi thông báo mới
                                 </Button>
                             </div>
-                            <List
-                                size={'large'}
-                                pagination={{
-                                    position: 'center',
-                                    align: 'bottom',
-                                }}
-                                dataSource={notify}
-                                renderItem={(item) => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            title={<b>{item.title}</b>}
-                                            description={<p>{item.description}</p>}
-                                        />
-                                        <Button onClick={(e) => handlePushNotifyAgain(e, item)}>Gửi lại</Button>
-                                    </List.Item>
-                                )}
-                            />
+                            {notify && (
+                                <List
+                                    size={'large'}
+                                    pagination={{
+                                        position: 'center',
+                                        align: 'bottom',
+                                    }}
+                                    dataSource={notify}
+                                    renderItem={(item) => (
+                                        <List.Item>
+                                            <List.Item.Meta
+                                                title={<b>{item.title}</b>}
+                                                description={<p>{item.description}</p>}
+                                            />
+                                            <Button onClick={(e) => handlePushNotifyAgain(e, item)}>Gửi lại</Button>
+                                        </List.Item>
+                                    )}
+                                />
+                            )}
                         </Col>
                     </Row>
                 )}
