@@ -12,7 +12,7 @@ import { storage } from '~/firebase';
 import LoadingSpin from '~/Loading/Loading.spin';
 import SpecialAttribute from './SpecialAttribute';
 function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDetail, setReRender, reRender }) {
-    const [sale, setSale] = useState(null);
+    const [sale, setSale] = useState([]);
     const [quantityAll, setQuantityAll] = useState(0);
     const [typeProduct, setTypeProduct] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
@@ -200,7 +200,11 @@ function ModalComponent({ productDetail, setModalOpen, modalOpen, setProductDeta
             });
         }
     };
-
+    useEffect(() => {
+        setProductDetail((prev) => {
+            return { ...prev, quantity: quantityAll };
+        });
+    }, [quantityAll]);
     console.log('productDetail', productDetail);
     return (
         <Modal

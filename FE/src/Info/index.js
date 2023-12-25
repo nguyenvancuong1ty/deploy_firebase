@@ -173,6 +173,7 @@ function Info() {
                         style={{ background: 'rgb(230 230 230)', padding: 12 }}
                     />
                     <div className={'button__left__position'}>
+                        <div className="flex-1"></div>
                         <Button onClick={handleUpdateInfo}>Cập nhật tài khoản</Button>
                         <HandleLogout element={<Button>Đăng xuất</Button>}></HandleLogout>
                     </div>

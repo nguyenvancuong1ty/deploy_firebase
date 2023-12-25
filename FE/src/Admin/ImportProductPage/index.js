@@ -29,7 +29,7 @@ function ImportProductPage() {
 
     const columns = [
         {
-            title: 'Có cái đéo gì đâu',
+            title: 'id',
             width: 180,
             dataIndex: 'name',
             key: 'name',

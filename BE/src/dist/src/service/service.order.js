@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase_1 = require("../db/firebase");
+const authorization_1 = require("../middleware/authorization");
+const areObjectsEqual_1 = require("../utils/areObjectsEqual");
 class OrderService {
     static getAllOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -103,19 +105,46 @@ class OrderService {
             const docSnap = yield docRef.get();
             const data = docSnap.data();
             if (status === 'shipping') {
-                if (data.status === 'shipping') {
-                    return false;
-                }
-                else {
-                    yield docRef.update({
-                        id_user_shipper,
-                        status,
-                        start_shipping_date: firebase_1.Timestamp.fromDate(new Date()),
-                    });
-                    return true;
+                if ((0, authorization_1.authorization)(['admin', 'shipper'])) {
+                    if (data.status === 'shipping') {
+                        return false;
+                    }
+                    else {
+                        yield docRef.update({
+                            id_user_shipper,
+                            status,
+                            start_shipping_date: firebase_1.Timestamp.fromDate(new Date()),
+                        });
+                        return true;
+                    }
                 }
             }
             else if (status === 'shipped') {
+                const productRef = firebase_1.db.collection('products').doc(req.body.product_id);
+                const productSnap = yield productRef.get();
+                const product = productSnap.data();
+                if (JSON.stringify(req.body.modifier) === '{}') {
+                    yield productRef.update({
+                        quantity: product.quantity * 1 - req.body.quantity,
+                        sold: product.sold * 1 + req.body.quantity,
+                    });
+                }
+                else {
+                    if (Array.isArray(product.attribute)) {
+                        console.log('vô');
+                        const attributeOk = product.attribute.filter((item) => {
+                            return !(0, areObjectsEqual_1.areObjectsEqual)(item, req.body.modifier);
+                        });
+                        const attributeNotOk = product.attribute.find((item) => {
+                            return (0, areObjectsEqual_1.areObjectsEqual)(item, req.body.modifier);
+                        });
+                        yield productRef.update({
+                            quantity: product.quantity * 1 - req.body.quantity,
+                            sold: product.sold * 1 + req.body.quantity,
+                            attribute: [...attributeOk, Object.assign(Object.assign({}, attributeNotOk), { quantity: attributeNotOk.quantity * 1 - req.body.quantity })],
+                        });
+                    }
+                }
                 yield docRef.update({
                     status,
                     shipped_date: firebase_1.Timestamp.fromDate(new Date()),
@@ -134,7 +163,6 @@ class OrderService {
     }
     static notifyForOrder(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Dô');
             if (req.body.status === 'shipping') {
                 const message = {
                     data: {

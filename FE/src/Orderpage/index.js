@@ -210,12 +210,11 @@ const OrderPage = () => {
             {user !== 'shipper' && (
                 <div className="bill-container">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <h2>Bill</h2>
+                        <h2>Đơn hàng</h2>
 
                         <div className="bill-total">
-                            <strong>TotalBill: </strong>
-                            {calculateTotal().toLocaleString('en-US')}đ
-                            <strong> &nbsp; &nbsp;TotalShippingCost: </strong>
+                            <strong>Tổng đơn: </strong>
+                            {calculateTotal().toLocaleString('en-US')}đ<strong> &nbsp; &nbsp;Tổng ship: </strong>
                             {TotalShippingCost().toLocaleString('en-US')}đ
                         </div>
                     </div>
@@ -253,13 +252,34 @@ const OrderPage = () => {
                                         <td>{item.shipping_address}</td>
                                         <td>394 Mỹ Đình 1, Hà Nội</td>
                                         {item.status === 'pending' && (
-                                            <td>{getDateFormat(new Date(item.order_date._seconds * 1000))}</td>
+                                            <td>
+                                                {getDateFormat(
+                                                    new Date(
+                                                        item.order_date._seconds * 1000 ||
+                                                            item.order_date.seconds * 1000,
+                                                    ),
+                                                )}
+                                            </td>
                                         )}
                                         {item.status === 'shipping' && (
-                                            <td>{getDateFormat(new Date(item.start_shipping_date._seconds * 1000))}</td>
+                                            <td>
+                                                {getDateFormat(
+                                                    new Date(
+                                                        item.start_shipping_date._seconds * 1000 ||
+                                                            item.start_shipping_date.seconds * 1000,
+                                                    ),
+                                                )}
+                                            </td>
                                         )}
                                         {item.status === 'shipped' && (
-                                            <td>{getDateFormat(new Date(item.shipped_date._seconds * 1000))}</td>
+                                            <td>
+                                                {getDateFormat(
+                                                    new Date(
+                                                        item.shipped_date._seconds * 1000 ||
+                                                            item.shipped_date.seconds * 1000,
+                                                    ),
+                                                )}
+                                            </td>
                                         )}
                                         <td>{item.status}</td>
                                         <td>

@@ -495,10 +495,10 @@ body::-webkit-scrollbar {
 }
 
 .button__left__position {
-    position: absolute;
     display: flex;
-    right: 12px;
-    bottom: 4px;
+}
+.flex-1 {
+    flex: 1;
 }
 
 .tabs__right {

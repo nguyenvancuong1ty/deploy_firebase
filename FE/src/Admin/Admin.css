@@ -251,3 +251,7 @@ span.ant-avatar.ant-avatar-circle.ant-avatar-image.css-dev-only-do-not-override-
     display: flex;
     justify-content: space-between;
 }
+
+.recharts-surface {
+    padding: 50px !important;
+}

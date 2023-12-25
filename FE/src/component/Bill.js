@@ -91,6 +91,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
         });
     };
     const handleComplete = (item) => {
+        console.log(item, 'ITEM');
         confirm({
             zIndex: 9999,
             title: 'Giao hàng thành công',
@@ -103,6 +104,11 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                         'uid',
                     )}&status=shipped`,
                     method: 'patch',
+                    data: {
+                        quantity: item.detail.quantity,
+                        product_id: item.detail.product_id,
+                        modifier: item.detail.modifier,
+                    },
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -167,11 +173,10 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
     return (
         <div className="bill-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <h2>Bill</h2>
-
+                <h2>Đơn hàng</h2>
                 <div className="bill-total">
-                    <strong>TotalBill: </strong>
-                    {calculateTotal().toLocaleString('en-US')}đ<strong> &nbsp; &nbsp;TotalShippingCost: </strong>
+                    <b>Tổng đơn: </b>
+                    {calculateTotal().toLocaleString('en-US')}đ<b> &nbsp; &nbsp;Tổng ship: </b>
                     {TotalShippingCost().toLocaleString('en-US')}đ
                 </div>
             </div>
@@ -220,9 +225,10 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                         <th>Tiền ship</th>
                         <th>Tổng cộng</th>
                         <th>cân nặng</th>
-                        <th>Địa chỉ</th>
+                        <th>Địa chỉ ship</th>
                         <th>Địa chỉ shop</th>
                         {type === 'pending' && <th>Ngày đặt</th>}
+                        {type === 'pending' && <th>Sđt</th>}
                         {type === 'shipping' && <th>Ngày ship</th>}
                         {type === 'shipped' && <th>Ngày nhận hàng</th>}
                         <th>Trạng thái</th>
@@ -249,6 +255,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                                 ),
                                             )}
                                         </td>
+                                        <td>{item.phoneNumber}</td>
                                         <td>
                                             <Button onClick={() => handlePickup(item)}>Nhận</Button>
                                         </td>
@@ -280,6 +287,7 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
                                                 ),
                                             )}
                                         </td>
+
                                         <td>{item.status}</td>
                                     </>
                                 )}

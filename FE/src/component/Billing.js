@@ -44,29 +44,34 @@ const Billing = ({ product, total, setShowBilling }) => {
                             setDistance(res.data);
                         });
                     } else {
-                        console.error('Không tìm thấy địa điểm.');
+                        toast.error('Địa chỉ không hợp lệ', { position: toast.POSITION.BOTTOM_LEFT });
                     }
                 })
                 .catch((error) => {
-                    console.error('Lỗi khi geocoding:', error);
+                    toast.error('Địa chỉ không hợp lệ', { position: toast.POSITION.BOTTOM_LEFT });
                 });
         }
     };
 
     const getShipCost = (item, distance) => {
         let shipCost = 0;
-        if (item.product.weight * item.quantity <= 1.2) {
-            shipCost = distance * 2000;
-        } else if (item.product.weight * item.quantity > 1.2 && item.product.weight * item.quantity <= 3) {
-            shipCost = distance * 3000;
-        } else if (item.product.weight * item.quantity > 3 && item.product.weight * item.quantity <= 5) {
-            shipCost = distance * 4000;
-        } else if (item.product.weight * item.quantity > 5 && item.product.weight * item.quantity <= 10) {
-            shipCost = distance * 5000;
+        if (distance <= 10) {
+            if (item.product.weight * item.quantity <= 1.2) {
+                shipCost = distance * 2000;
+            } else if (item.product.weight * item.quantity > 1.2 && item.product.weight * item.quantity <= 3) {
+                shipCost = distance * 3000;
+            } else if (item.product.weight * item.quantity > 3 && item.product.weight * item.quantity <= 5) {
+                shipCost = distance * 4000;
+            } else if (item.product.weight * item.quantity > 5 && item.product.weight * item.quantity <= 10) {
+                shipCost = distance * 5000;
+            } else {
+                shipCost = distance * 6000;
+            }
         } else {
-            shipCost = distance * 6000;
+            shipCost = item.product.weight * item.quantity * 10000;
         }
-        return shipCost;
+
+        return Math.round(shipCost);
     };
     useEffect(() => {
         const tempTotalShippingCost = product.reduce((accumulator, item) => {
@@ -76,21 +81,28 @@ const Billing = ({ product, total, setShowBilling }) => {
         setTotalShippingCost(tempTotalShippingCost);
     }, [product, distance]);
     const handleClickOrder = () => {
-        if (distance === 0) {
-            ref.current.focus();
-        } else {
+        if (phoneNumber !== '' && distance !== 0) {
             product.length > 0 && handleOrder();
         }
+        if (distance === 0) {
+            toast.warn('Vui lòng kiểm tra giá ship', { position: toast.POSITION.BOTTOM_LEFT });
+        }
+        if (phoneNumber === '') {
+            toast.warn('Vui lòng thêm số điện thoại !', { position: toast.POSITION.BOTTOM_LEFT });
+        } else {
+        }
     };
+
     const handleOrder = () => {
         setLoading(true);
         const promises = product.map((element) => {
             const itemShippingCost = getShipCost(element, distance);
+            console.log('element.product.Id', element.cakeID);
             const data = {
                 uid: element.uid,
                 shipping_address: address,
                 phoneNumber: phoneNumber,
-                weight: element.product.weight * element.quantity,
+                weight: (element.product.weight * element.quantity).toFixed(1) * 1,
                 shipping_cost: itemShippingCost,
                 total_amount: Math.floor(
                     (element.product.price - (element.product.price * (element.product.sale.percent || 0)) / 100) *
@@ -98,7 +110,7 @@ const Billing = ({ product, total, setShowBilling }) => {
                         itemShippingCost,
                 ),
                 detail: {
-                    product_id: element.product.Id,
+                    product_id: element.cakeID,
                     images: element.product.images,
                     name: element.product.name,
                     price: element.product.price,
@@ -147,30 +159,19 @@ const Billing = ({ product, total, setShowBilling }) => {
             </h2>
             <Space direction="horizontal" size="middle">
                 <Input
+                    className="fw-bold"
                     placeholder="Số điện thoại"
-                    // ref={ref}
                     value={phoneNumber || ''}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                 />
                 <Input
+                    style={{ width: 'max-content' }}
+                    className="fw-bold"
                     placeholder="Địa chỉ giao hàng"
-                    ref={ref}
-                    addonAfter={
-                        <Tooltip title="Địa chỉ mặc định" placement="topRight">
-                            <FontAwesomeIcon
-                                icon={faCircleQuestion}
-                                onClick={() => {
-                                    setAddress(localStorage.getItem('address'));
-                                }}
-                            />
-                        </Tooltip>
-                    }
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
-                <Button type="primary" onClick={handleAddress}>
-                    Ok
-                </Button>
+                <Button onClick={handleAddress}>Giá ship</Button>
             </Space>
             <table className="billing-table">
                 <thead>
@@ -205,22 +206,19 @@ const Billing = ({ product, total, setShowBilling }) => {
                 </tbody>
             </table>
             <div className="billing-total">
-                <h3>
-                    Ship từ Mỹ Đình 1, Hà Nội: {distance.toFixed(1)}km{' '}
-                    <Tooltip title="Thông tin vận chuyển" placement="topLeft">
-                        <FontAwesomeIcon
-                            icon={faTruckArrowRight}
-                            style={{ color: '#11cd0e' }}
-                            onClick={() => setIsModalOpen(true)}
-                        />
-                    </Tooltip>
-                </h3>
+                <h3>Ship từ Mỹ Đình 1, Hà Nội: {distance.toFixed(1)}km </h3>
                 <h3>Tổng ship: {totalShippingCost.toLocaleString('en-US')}đ</h3>
                 <h3>Tổng thanh toán: {(total + totalShippingCost).toLocaleString('en-US')}đ</h3>
             </div>
             <div className="billing-customer-info">
                 <h3>Thông tin khách hàng</h3>
                 {/* Các trường thông tin khách hàng */}
+            </div>
+            <div>
+                <Button onClick={() => setIsModalOpen(true)}>
+                    Thông tin vận chuyển
+                    <FontAwesomeIcon icon={faTruckArrowRight} style={{ color: '#11cd0e', marginLeft: 10 }} />
+                </Button>
             </div>
             <Tooltip title="Nhập địa chỉ trước khi đặt" placement="top">
                 <button className="billing-button" onClick={handleClickOrder}>
@@ -245,11 +243,14 @@ const Billing = ({ product, total, setShowBilling }) => {
                     setIsModalOpen(false);
                 }}
             >
-                <p>Đơn hàng từ dưới 1,2kg (2000đ / 1km)</p>
-                <p>Đơn hàng từ từ 1,2kg - 3kg (3000đ / 1km)</p>
-                <p>Đơn hàng từ từ 3kg - 5kg (4000đ / 1km)</p>
-                <p>Đơn hàng từ từ 5kg - 10kg (5000đ / 1km)</p>
-                <p>Đơn hàng từ trên 10kg (6000đ / 1km)</p>
+                <b>Đơn hàng dưới 10km:</b>
+                <p>Đơn hàng từ dưới 1,2kg (2,000đ / 1km)</p>
+                <p>Đơn hàng từ từ 1,2kg - 3kg (3,000đ / 1km)</p>
+                <p>Đơn hàng từ từ 3kg - 5kg (4,000đ / 1km)</p>
+                <p>Đơn hàng từ từ 5kg - 10kg (5,000đ / 1km)</p>
+                <p>Đơn hàng từ trên 10kg (6,000đ / 1km)</p>
+                <b>Đơn hàng trên 10km:</b>
+                <p>10,000đ trên mỗi kg</p>
             </Modal>
         </div>
     );

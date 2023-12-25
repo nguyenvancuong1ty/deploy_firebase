@@ -81,6 +81,7 @@ function Cart({ dataCart, number }) {
         dispatch(setTotalCoin(total));
         // eslint-disable-next-line
     }, [checkOut]);
+    console.log('dataCart', dataCart);
     return (
         <div
             className="wrap_cart"

@@ -98,16 +98,16 @@ function DashboardPage({ product, account, order, ordered }) {
                             <Col>
                                 <div className="role__item ordered">
                                     <h5>{ordered && ordered.length > 0 ? ordered.length : 0}</h5>
-                                    <h5>Đơn hàng chưa sử lý</h5>
+                                    <h5>Đơn hàng đang sử lý</h5>
                                 </div>
                             </Col>
                         </Row>
                         <hr></hr>
                         <Row>
-                            <Col></Col>
-                            <Col>
+                            <Col xs={2}></Col>
+                            <Col xs={7}>
                                 <div>
-                                    <span>Khoảng thời gian</span> &emsp;
+                                    <span>&emsp; &emsp; &emsp;Khoảng thời gian</span> &emsp;
                                     <RangePicker
                                         format="YYYY-MM-DD"
                                         onChange={onChange}
@@ -121,7 +121,7 @@ function DashboardPage({ product, account, order, ordered }) {
                                 </div>
 
                                 <BarChart
-                                    width={600}
+                                    width={700}
                                     height={600}
                                     data={chartData}
                                     margin={{ top: 20, right: 20, bottom: 20, left: 10 }}

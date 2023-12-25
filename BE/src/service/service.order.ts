@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { Timestamp, db, messaging } from '../db/firebase';
 import Order from '../models/model.order';
+import { authorization } from '../middleware/authorization';
+import { areObjectsEqual } from '../utils/areObjectsEqual';
 
 class OrderService {
     static async getAllOrder(req: Request, res: Response): Promise<Array<Order | any>> {
@@ -103,17 +105,45 @@ class OrderService {
         const docSnap = await docRef.get();
         const data = docSnap.data();
         if (status === 'shipping') {
-            if (data.status === 'shipping') {
-                return false;
-            } else {
-                await docRef.update({
-                    id_user_shipper,
-                    status,
-                    start_shipping_date: Timestamp.fromDate(new Date()),
-                });
-                return true;
+            if (authorization(['admin', 'shipper'])) {
+                if (data.status === 'shipping') {
+                    return false;
+                } else {
+                    await docRef.update({
+                        id_user_shipper,
+                        status,
+                        start_shipping_date: Timestamp.fromDate(new Date()),
+                    });
+                    return true;
+                }
             }
         } else if (status === 'shipped') {
+            const productRef = db.collection('products').doc(req.body.product_id);
+            const productSnap = await productRef.get();
+            const product = productSnap.data();
+            if (JSON.stringify(req.body.modifier) === '{}') {
+                await productRef.update({
+                    quantity: product.quantity * 1 - req.body.quantity,
+                    sold: product.sold * 1 + req.body.quantity,
+                });
+            } else {
+                if (Array.isArray(product.attribute)) {
+                    console.log('vô');
+
+                    const attributeOk = product.attribute.filter((item: object) => {
+                        return !areObjectsEqual(item, req.body.modifier);
+                    });
+                    const attributeNotOk = product.attribute.find((item: object) => {
+                        return areObjectsEqual(item, req.body.modifier);
+                    });
+                    await productRef.update({
+                        quantity: product.quantity * 1 - req.body.quantity,
+                        sold: product.sold * 1 + req.body.quantity,
+                        attribute: [...attributeOk, { ...attributeNotOk, quantity: attributeNotOk.quantity * 1 - req.body.quantity }],
+                    });
+                }
+            }
+
             await docRef.update({
                 status,
                 shipped_date: Timestamp.fromDate(new Date()),
@@ -130,8 +160,6 @@ class OrderService {
     }
 
     static async notifyForOrder(req: Request, res: Response) {
-        console.log('Dô');
-
         if (req.body.status === 'shipping') {
             const message: object = {
                 data: {

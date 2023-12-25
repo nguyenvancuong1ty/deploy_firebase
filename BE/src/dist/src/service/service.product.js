@@ -100,8 +100,6 @@ class ProductService {
             // const apiKey = process.env.apiKey;
             // const origin: string = req.query.origin as string;
             const destination = req.query.destination;
-            console.log(destination);
-            // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`;
             const url = `https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=21.021406,105.769196&destinations=${destination}&travelMode=driving&key=At2RaqusWxbM5bfp6BOFhhTgXTSZrIYO9emqdMc-NfilRQNvHnP-dKZDpi1khsNZ`;
             yield axios_1.default
                 .get(url)

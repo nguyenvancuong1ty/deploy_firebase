@@ -194,7 +194,8 @@ class AccountService {
                 }
                 const html = await readFile(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
                 const renderedHtml = ejs.render(html, { code: code });
-
+                console.log("Vẫn OK");
+                
                 await transporter.sendMail({
                     from: 'Email thank you',
                     to: [req.params.email], // list of receivers
@@ -208,6 +209,8 @@ class AccountService {
             });
             return true;
         } catch (error) {
+            console.log('ERRRR', error);
+
             return false;
         }
     }

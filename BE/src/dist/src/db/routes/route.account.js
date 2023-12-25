@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require('express');
+const accountRouter = express.Router();
+const controller_account_1 = __importDefault(require("../controller/controller.account"));
+const response_error_1 = require("../utils/response.error");
+const authentication_1 = require("../middleware/authentication");
+const authorization_1 = require("../middleware/authorization");
+const accountController = new controller_account_1.default();
+// accountRouter.use(checkApiKey);
+accountRouter.post('/account/login', (0, response_error_1.handleError)(accountController.login));
+accountRouter.post('/account/login-google', (0, response_error_1.handleError)(accountController.handleLoginWithGoogle));
+accountRouter.post('/account/', (0, response_error_1.handleError)(accountController.create));
+accountRouter.post('/account/:id', (0, response_error_1.handleError)(accountController.changePassword));
+accountRouter.put('/account/:id', (0, authorization_1.authorization)(['admin']), (0, response_error_1.handleError)(accountController.update));
+accountRouter.get('/account/confirm-code/:email', (0, response_error_1.handleError)(accountController.confirmCode));
+accountRouter.post('/account/change-password/:email', authentication_1.authentication, (0, response_error_1.handleError)(accountController.forgetPassword));
+accountRouter.post('/registerNotify', (0, response_error_1.handleError)(accountController.registerNotify));
+accountRouter.post('/notify-all', (0, response_error_1.handleError)(accountController.notifyAll));
+accountRouter.get('/account', (0, authorization_1.authorization)(['admin']), (0, response_error_1.handleError)(accountController.getAllAccount));
+accountRouter.get('/unsubscribeFromTopic', (0, response_error_1.handleError)(accountController.unsubscribeFromTopic));
+exports.default = accountRouter;

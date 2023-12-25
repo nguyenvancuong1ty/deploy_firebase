@@ -14,6 +14,8 @@ import ChangeQuantityOrder from '~/component/ChangeQuantityOrder';
 import Footer from '~/component/Footer';
 import LoginCpn from '~/LoginCpn';
 import axios from 'axios';
+import { setTotalCoin } from '~/redux';
+import Billing from '~/component/Billing';
 function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
     const { confirm } = Modal;
     const { id } = useParams();
@@ -30,7 +32,10 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
     const [attribute, setAttribute] = useState(null);
+    const [showBilling, setShowBilling] = useState(false);
+    const [checkOut, setCheckOut] = useState([]);
     const dispatch = useDispatch();
+    const totalCoin = useSelector((state) => state.totalCoinReducer.totalCoin);
 
     useEffect(() => {
         setLoading(true);
@@ -59,6 +64,22 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
             setInitialPrice(data.price);
         }
     }, [data]);
+    useEffect(() => {
+        setCheckOut([
+            {
+                uid: localStorage.getItem('uid'),
+                cakeID: id,
+                quantity: quantityAddToCart,
+                modifier: specialAttributes,
+                initialPrice: initialPrice,
+                realPrice: realPrice,
+                product: data,
+            },
+        ]);
+    }, [quantityAddToCart, specialAttributes, initialPrice, realPrice, id]);
+    useEffect(() => {
+        dispatch(setTotalCoin(realPrice * quantityAddToCart));
+    }, [checkOut]);
     const addToCartSuccess = () =>
         toast.success('Thêm mặt hàng thành công', {
             position: 'bottom-left',
@@ -84,7 +105,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                     uid: localStorage.getItem('uid'),
                     cakeID: ID,
                     quantity: quantityAddToCart,
-                    modifier: specialAttributes,
+                    modifier: specialAttributes || {},
                     initialPrice: initialPrice,
                     realPrice: realPrice,
                 },
@@ -158,7 +179,6 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
 
     const onChange = (e) => {
         const attribute = JSON.parse(e.target.value);
-        console.log(attribute.price, 'data.price', data.price);
         setAttribute(attribute);
         if (attribute.quantity) {
             setRemainingProduct(attribute.quantity);
@@ -178,7 +198,14 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
         specialAttributes && delete specialAttributes.image;
         setSpecialAttributes(specialAttributes);
     }, [attribute]);
-    console.log(specialAttributes);
+    const handleSubmitForm = (e, type) => {
+        e.preventDefault();
+        if (type === 'addCart') {
+            handleConfirm(id, remainingProduct);
+        } else {
+            setShowBilling(true);
+        }
+    };
     return (
         <>
             {loading && <LoadingAntd></LoadingAntd>}
@@ -231,13 +258,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                                 </h4>
                                 <h6 className="detail_info--original--sale">{data.sale.percent || 0}% giảm</h6>
                             </div>
-                            <form
-                                className=""
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleConfirm(id, remainingProduct);
-                                }}
-                            >
+                            <div>
                                 {data.attribute && (
                                     <div className=" detail_info--head select">
                                         {Array.isArray(labels) && labels.length > 0 && (
@@ -271,20 +292,29 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                                 </div>
                                 <div className="detail_info--head detail__btn">
                                     <Button
-                                        htmlType="submit"
                                         size="large"
                                         className="detail__btn--order"
                                         disabled={attribute ? false : labels && true}
+                                        onClick={(e) => {
+                                            handleSubmitForm(e, 'addCart');
+                                        }}
                                     >
                                         <FontAwesomeIcon icon={faCartPlus} />
                                         <span style={{ marginLeft: 12 }}>Thêm vào giỏ hàng</span>
                                     </Button>
-                                    <Button type="submit" size="large" className="detail__btn--order" disabled>
+                                    <Button
+                                        size="large"
+                                        className="detail__btn--order"
+                                        disabled={attribute ? false : labels && true}
+                                        onClick={(e) => {
+                                            handleSubmitForm(e, 'buyProduct');
+                                        }}
+                                    >
                                         <FontAwesomeIcon icon={faCartPlus} />
                                         <span style={{ marginLeft: 12 }}>Mua Ngay</span>
                                     </Button>
                                 </div>
-                            </form>
+                            </div>
 
                             <hr />
                             <div className="detail_info--head">
@@ -327,6 +357,7 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
                 </Container>
             )}
             {show && <LoginCpn setShow={setShow} setUid={setUid} />}
+            {showBilling && <Billing product={checkOut} total={totalCoin} setShowBilling={setShowBilling} />}
             <Footer></Footer>
         </>
     );

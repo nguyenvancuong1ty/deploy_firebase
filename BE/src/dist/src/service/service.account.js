@@ -215,6 +215,7 @@ class AccountService {
                     }
                     const html = yield readFile(path_1.default.join(path_1.default.resolve(process.cwd()), 'public/index.ejs'));
                     const renderedHtml = ejs.render(html, { code: code });
+                    console.log("Vẫn OK");
                     yield transporter.sendMail({
                         from: 'Email thank you',
                         to: [req.params.email],
@@ -229,6 +230,7 @@ class AccountService {
                 return true;
             }
             catch (error) {
+                console.log('ERRRR', error);
                 return false;
             }
         });

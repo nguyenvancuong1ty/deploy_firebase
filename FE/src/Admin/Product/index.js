@@ -18,7 +18,6 @@ function ProductPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [productDetail, setProductDetail] = useState(null);
     const [reRender, setReRender] = useState(true);
-
     useEffect(() => {
         setLoading(true);
         const fetchData = async () => {
@@ -223,9 +222,32 @@ function ProductPage() {
         setFilteredInfo(filters);
     };
     console.log(loading);
+    const handleChangeSearch = (e) => {
+        const filData = product.filter((item) => {
+            return item.name.includes(e.target.value);
+        });
+
+        const newData = filData.map((item) => {
+            return {
+                key: item.Id,
+                Id: item.Id,
+                name: item.name,
+                thumb: <img alt="" src={item.images} className="product__thumb" />,
+                quantity: item.quantity,
+                sold: item.sold,
+                type: item.type,
+                weight: item.weight,
+                price: item.price,
+                sale: item.sale.percent || 0,
+                price2: item.price - (item.price * item.sale.percent || 0) / 100,
+            };
+        });
+        setData(newData);
+    };
     return (
         <div className="admin__wrap--content">
             <Container>
+                <input placeholder="Tìm theo tên" onChange={handleChangeSearch} />
                 {loading ? (
                     <LoadingAntd subClass="subLoading" foreignClass="foreignClass" />
                 ) : (

@@ -19,9 +19,9 @@ function Notify({ loading }) {
                             <NotifyItem key={index} data={item} index={index} setNotify={setNotify} setOpen={setOpen} />
                         ))}
                         <footer>
-                            <button onClick={() => {}} className="button">
+                            {/* <button onClick={() => {}} className="button">
                                 Đánh dấu tất cả đã đọc
-                            </button>
+                            </button> */}
                         </footer>
                     </>
                 ) : (
