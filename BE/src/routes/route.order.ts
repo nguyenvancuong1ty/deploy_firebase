@@ -14,7 +14,7 @@ orderRouter.get('/order/all', authorization(['admin']), handleError(orderControl
 orderRouter.get('/order/new-order', authentication, handleError(orderController.getNewOrder));
 orderRouter.post('/order/', authentication, handleError(orderController.addOrder));
 orderRouter.get('/order/order-for-customer', authentication, handleError(orderController.getOrderForCustomer));
-orderRouter.patch('/order/:id', authentication, handleError(orderController.deleteShallowOrder));
+orderRouter.patch('/order/:id', authentication, handleError(orderController.deleteShallowOrder));       
 orderRouter.patch('/order/', authentication, handleError(orderController.updateOrder));
 orderRouter.post('/order/notify', authentication, handleError(orderController.notifyForOrder));
 

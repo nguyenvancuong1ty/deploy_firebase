@@ -91,7 +91,6 @@ const Bill = ({ items, setType, type, setDataUser, loading, setLoading, buttonAc
         });
     };
     const handleComplete = (item) => {
-        console.log(item, 'ITEM');
         confirm({
             zIndex: 9999,
             title: 'Giao hàng thành công',

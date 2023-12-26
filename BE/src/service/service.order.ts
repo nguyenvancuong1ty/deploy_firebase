@@ -178,7 +178,6 @@ class OrderService {
                     },
                 },
             };
-
             const messageSend = await messaging.send(message);
             const notifyQuery = db.collection('notify');
             const querySnapshot = await notifyQuery.add({

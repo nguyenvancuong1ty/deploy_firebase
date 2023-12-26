@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Table } from 'antd';
+import { Button, Input, Popconfirm, Table } from 'antd';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
@@ -247,7 +247,7 @@ function ProductPage() {
     return (
         <div className="admin__wrap--content">
             <Container>
-                <input placeholder="Tìm theo tên" onChange={handleChangeSearch} />
+                <Input placeholder="Tìm theo tên" onChange={handleChangeSearch} style={{ width: 300 }} />
                 {loading ? (
                     <LoadingAntd subClass="subLoading" foreignClass="foreignClass" />
                 ) : (

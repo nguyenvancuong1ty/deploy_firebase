@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Admin.css';
-import { faBars, faBell, faFilter, faGauge, faHouse, faMoneyBill, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { faBars, faBell, faCartPlus, faFilter, faHouse, faMoneyBill, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import ProductPage from './Product';
 import AccountPage from './Account';
@@ -10,15 +10,14 @@ import axios from 'axios';
 import NotifyPage from './Notify';
 
 import NotifyComponent from '~/component/NotifyComponent';
-import { ExclamationCircleFilled, LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import Info from './Info';
-import confirm from 'antd/es/modal/confirm';
-import { useDispatch } from 'react-redux';
 import HandleLogout from '~/until/handleLogout';
 import TypeProduct from './TypeProduct';
 import ImportProductPage from './ImportProductPage';
 import { faProductHunt } from '@fortawesome/free-brands-svg-icons';
+import OrderPage from './Order';
 
 function Admin() {
     const [showNav, setShowNav] = useState(true);
@@ -35,13 +34,6 @@ function Admin() {
             ),
             link: 'dashboard',
         },
-        // {
-        //     title: 'Dashboard',
-        //     icon: (
-        //         <FontAwesomeIcon icon={faGauge} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
-        //     ),
-        //     link: 'dashboard',
-        // },
         {
             title: 'Sản phẩm',
             icon: (
@@ -72,6 +64,18 @@ function Admin() {
                 <FontAwesomeIcon icon={faFilter} style={{ color: '#4daf46' }} size="xl" className="admin__nav--icon" />
             ),
             link: 'type',
+        },
+        {
+            title: 'Đơn hàng',
+            icon: (
+                <FontAwesomeIcon
+                    icon={faCartPlus}
+                    style={{ color: '#4daf46' }}
+                    size="xl"
+                    className="admin__nav--icon"
+                />
+            ),
+            link: 'order-manager',
         },
         {
             title: 'Nhập hàng',
@@ -232,6 +236,7 @@ function Admin() {
                         <Route path="/account" element={<AccountPage account={account}></AccountPage>} />
                         <Route path="/info" element={<Info account={account}></Info>} />
                         <Route path="/type" element={<TypeProduct account={account}></TypeProduct>} />
+                        <Route path="/order-manager" element={<OrderPage account={account}></OrderPage>} />
                         <Route
                             path="/import--product"
                             element={<ImportProductPage account={account}></ImportProductPage>}

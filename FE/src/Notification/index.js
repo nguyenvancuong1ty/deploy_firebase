@@ -57,9 +57,6 @@ function NotificationComponent() {
                 console.log('Error:------------------', error);
             }
         };
-
-        // Xử lý Push Notification khi nhận được
-
         localStorage.getItem('uid') && registerNotification();
     }, [localStorage.getItem('uid')]);
 
@@ -76,7 +73,6 @@ function NotificationComponent() {
                 if (change.type === 'added' && change.doc.exists()) {
                 } else if (change.type === 'removed') {
                 } else if (change.type === 'modified') {
-                    console.log('token', token);
                     const newOrder = change.doc.data();
                     newOrder.id_user_shipper &&
                         newOrder.status === 'shipping' &&

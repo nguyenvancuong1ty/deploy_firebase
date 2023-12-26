@@ -12,7 +12,7 @@ function DashboardPage({ product, account, order, ordered }) {
     const [loading, setLoading] = useState(false);
     const [allOrder, setAllOrder] = useState([]);
     const [startDate, setStartDate] = useState(new Date('2015/01/01'));
-    const [endDate, setEndDate] = useState(new Date('2024/01/01'));
+    const [endDate, setEndDate] = useState(new Date());
     const [chartData, setChartData] = useState([]);
     const formatVnd = (money) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(money);
@@ -112,10 +112,7 @@ function DashboardPage({ product, account, order, ordered }) {
                                         format="YYYY-MM-DD"
                                         onChange={onChange}
                                         onOk={onOk}
-                                        defaultValue={[
-                                            dayjs('2015/01/01', 'YYYY-MM-DD'),
-                                            dayjs('2024/01/01', 'YYYY-MM-DD'),
-                                        ]}
+                                        defaultValue={[dayjs('2015/01/01', 'YYYY-MM-DD'), dayjs()]}
                                         style={{ margin: '16px 0 0 ' }}
                                     />
                                 </div>
