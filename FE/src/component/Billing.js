@@ -16,7 +16,7 @@ const Billing = ({ product, total, setShowBilling }) => {
     useEffect(() => {
         const info = sessionStorage.getItem('reduxAuthState');
         info&&setAddress(JSON.parse(info).address);
-        setPhoneNumber(JSON.parse(info).phoneNumber);
+        info&&setPhoneNumber(JSON.parse(info).phoneNumber);
     }, []);
     const handleAddress = () => {
         if (address.length === 0) {
