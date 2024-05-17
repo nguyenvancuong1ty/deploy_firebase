@@ -24,7 +24,7 @@ const Billing = ({ product, total, setShowBilling }) => {
         } else {
             const geocodingApiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
                 address,
-            )}.json?access_token=pk.eyJ1Ijoia2llbWdvIiwiYSI6ImNscTVobGZjaTBpdW8ybG52aWdwcDNmZGgifQ._OPGMkxjlbcoK1sLv9ql5w`;
+            )}.json?access_token=pk.eyJ1IjoidGVzdDE5MyIsImEiOiJjbHdhYXh4MDUwOG5wMnJsOWZ6Mzc0ejIxIn0.7Y-WNmsnl11GgOw6PRs3rw`;
 
             axios
                 .get(geocodingApiUrl)
