@@ -10,7 +10,7 @@ function NotificationComponent() {
     const [token, setToken] = useState('');
     const isLogin = useSelector((state) => state.AuthReducer.Auth);
     const handlePushNotification = () => {
-        console.log('Sẵn sàng nhận thông báo');
+        console.log('Sẵn sàng nhận thông báo ok');
         onMessage(messaging, (payload) => {
             console.log(payload);
             toast.info('Bạn có 1 thông báo mới', {
