@@ -203,7 +203,11 @@ function Detail({ Page, setShow2, showCart, setShowCart, setUid2 }) {
         if (type === 'addCart') {
             handleConfirm(id, remainingProduct);
         } else {
+            if (!uid) {
+            setShow(true);
+        } else {
             setShowBilling(true);
+        }
         }
     };
     return (
