@@ -194,6 +194,9 @@ class AccountService {
                     });
                 }
                 const html = await readFile(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
+                console.log('html', html);
+                console.log(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
+
                 const renderedHtml = ejs.render(html, { code: code });
                 console.log('renderedHtml', renderedHtml);
 
