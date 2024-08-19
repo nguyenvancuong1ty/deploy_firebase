@@ -77,18 +77,18 @@ function Admin() {
             ),
             link: 'order-manager',
         },
-        {
-            title: 'Nhập hàng',
-            icon: (
-                <FontAwesomeIcon
-                    icon={faMoneyBill}
-                    style={{ color: '#4daf46' }}
-                    size="xl"
-                    className="admin__nav--icon"
-                />
-            ),
-            link: 'import--product',
-        },
+        // {
+        //     title: 'Nhập hàng',
+        //     icon: (
+        //         <FontAwesomeIcon
+        //             icon={faMoneyBill}
+        //             style={{ color: '#4daf46' }}
+        //             size="xl"
+        //             className="admin__nav--icon"
+        //         />
+        //     ),
+        //     link: 'import--product',
+        // },
     ];
     const items = [
         {

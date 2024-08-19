@@ -174,6 +174,7 @@ class AccountService {
     static async confirmCode(req: Request, res: Response): Promise<any> {
         const transporter = await mailDefine();
         const code: number = Math.floor((Math.random() + 1) * 10000);
+        console.log('Vẫn OK');
         try {
             await db.runTransaction(async (transaction: any) => {
                 const oldCode = await transaction.get(db.collection('codeConfirm').where('email', '==', req.params.email));
@@ -194,8 +195,7 @@ class AccountService {
                 }
                 const html = await readFile(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
                 const renderedHtml = ejs.render(html, { code: code });
-                console.log("Vẫn OK");
-                
+
                 await transporter.sendMail({
                     from: 'Email thank you',
                     to: [req.params.email], // list of receivers
