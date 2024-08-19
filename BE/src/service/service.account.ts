@@ -131,6 +131,7 @@ class AccountService {
                     username: email,
                 };
                 const response = await db.collection('account').add(newAccount);
+
                 if (response.id) {
                     const accessToken: string = jwt.sign({ email: email, role: newAccount.type_account }, process.env.SECRET, {
                         expiresIn: '2d',
@@ -174,7 +175,6 @@ class AccountService {
     static async confirmCode(req: Request, res: Response): Promise<any> {
         const transporter = await mailDefine();
         const code: number = Math.floor((Math.random() + 1) * 10000);
-        console.log('Vẫn OK');
         try {
             await db.runTransaction(async (transaction: any) => {
                 const oldCode = await transaction.get(db.collection('codeConfirm').where('email', '==', req.params.email));
