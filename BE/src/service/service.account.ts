@@ -193,8 +193,10 @@ class AccountService {
                         code: code,
                     });
                 }
-                const html = await readFile(path.join(path.resolve(process.cwd()), 'src/templates/index.ejs'));
+                const html = await readFile(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
+                console.log(path.join(path.resolve(process.cwd()), 'public/index.ejs'));
                 console.log('html', html);
+
                 const renderedHtml = ejs.render(html, { code: code });
                 console.log('renderedHtml', renderedHtml);
 

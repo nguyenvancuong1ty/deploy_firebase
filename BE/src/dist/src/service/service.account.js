@@ -213,7 +213,8 @@ class AccountService {
                             code: code,
                         });
                     }
-                    const html = yield readFile(path_1.default.join(path_1.default.resolve(process.cwd()), 'src/templates/index.ejs'));
+                    const html = yield readFile(path_1.default.join(path_1.default.resolve(process.cwd()), 'public/index.ejs'));
+                    console.log(path_1.default.join(path_1.default.resolve(process.cwd()), 'public/index.ejs'));
                     console.log('html', html);
                     const renderedHtml = ejs.render(html, { code: code });
                     console.log('renderedHtml', renderedHtml);
