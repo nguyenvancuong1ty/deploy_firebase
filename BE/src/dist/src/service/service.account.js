@@ -219,7 +219,7 @@ class AccountService {
                     const renderedHtml = ejs.render(html, { code: code });
                     console.log('renderedHtml', renderedHtml);
                     yield transporter.sendMail({
-                        from: 'Email thank you',
+                        from: 'Mr.Cuong',
                         to: [req.params.email],
                         subject: 'Hello ✔ 😊😊😊',
                         text: 'Thank you 😁😁😁',

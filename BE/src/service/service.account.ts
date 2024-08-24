@@ -201,7 +201,7 @@ class AccountService {
                 console.log('renderedHtml', renderedHtml);
 
                 await transporter.sendMail({
-                    from: 'Email thank you',
+                    from: 'Mr.Cuong',
                     to: [req.params.email], // list of receivers
                     subject: 'Hello ✔ 😊😊😊', // Subject line
                     text: 'Thank you 😁😁😁', // plain text body
