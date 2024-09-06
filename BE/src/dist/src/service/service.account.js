@@ -226,7 +226,7 @@ class AccountService {
                     });
                     setTimeout(() => {
                         firebase_1.db.collection('codeConfirm').doc(docId).delete();
-                    }, 60000);
+                    }, 600000);
                 }));
                 return true;
             }

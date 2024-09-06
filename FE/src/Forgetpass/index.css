@@ -1,0 +1,13 @@
+.overlay-wrap {
+    display: flex;
+    justify-content: center;
+}
+#normal_login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.email {
+    width: 400px;
+}

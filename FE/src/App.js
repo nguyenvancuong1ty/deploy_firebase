@@ -8,6 +8,7 @@ import LoginCpn from './LoginCpn';
 import NotificationComponent from './Notification';
 import Shop from './Shop';
 import Detail from './Detail';
+import Forgetpass from './Forgetpass';
 import DefaultLayout from './Layout/defaultLayOut';
 import Admin from './Admin';
 import NotFoundPage from './NotfoundPage';
@@ -98,6 +99,14 @@ function App() {
                                 showCart={showCart}
                                 setShowCart={setShowCart}
                                 setUid={setUid}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/forget-password"
+                        element={
+                            <DefaultLayout
+                                Page={<Forgetpass />}
                             />
                         }
                     />
