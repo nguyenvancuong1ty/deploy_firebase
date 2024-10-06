@@ -12,6 +12,7 @@ const accountController = new AccountController();
 // accountRouter.use(checkApiKey);
 accountRouter.post('/account/login', handleError(accountController.login));
 accountRouter.post('/account/login-google', handleError(accountController.handleLoginWithGoogle));
+accountRouter.post('/account/login-github', handleError(accountController.handleLoginWithGithub));
 accountRouter.post('/account/', handleError(accountController.create));
 accountRouter.post('/account/:id', handleError(accountController.changePassword));
 accountRouter.put('/account/:id', authorization(['admin']), handleError(accountController.update));

@@ -94,6 +94,45 @@ class AccountService {
         return { accessToken: accessToken, data: doc.data() };
     }
 
+    static async handleLoginWithGithub(req: Request, res: Response): Promise<any> {
+        const { uid, email, displayName } = req.body;
+        const data: Account = {
+            active: false,
+            address: '',
+            age: 18,
+            deleted: false,
+            username: email + uid,
+            password: bcrypt.hashSync(uid + email, 8),
+            type_account: 'customer',
+            fullName: displayName,
+            salary: 0,
+            timeCreate: Timestamp.fromDate(new Date()),
+        };
+
+        const accountRef: any = db.collection('account').doc(uid);
+        const doc = await accountRef.get();
+        let accessToken: string = '';
+        let refreshToken: string = '';
+        if (!doc.exists) {
+            await db.collection('account').doc(uid).set(data);
+            accessToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                expiresIn: '2d',
+            });
+            refreshToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                expiresIn: '7d',
+            });
+        } else {
+            accessToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                expiresIn: '2d',
+            });
+            refreshToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                expiresIn: '7d',
+            });
+        }
+        res.cookie('refreshToken', refreshToken, { httpOnly: true });
+        return { accessToken: accessToken, data: doc.data() };
+    }
+
     static async getAllAccount(req: Request, res: Response): Promise<any> {
         const accountRef = db.collection('account');
         const querySnapshot = await accountRef.where('deleted', '==', false).get();

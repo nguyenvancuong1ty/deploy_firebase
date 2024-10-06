@@ -109,6 +109,46 @@ class AccountService {
             return { accessToken: accessToken, data: doc.data() };
         });
     }
+    static handleLoginWithGithub(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { uid, email, displayName } = req.body;
+            const data = {
+                active: false,
+                address: '',
+                age: 18,
+                deleted: false,
+                username: email + uid,
+                password: bcrypt.hashSync(uid + email, 8),
+                type_account: 'customer',
+                fullName: displayName,
+                salary: 0,
+                timeCreate: firebase_1.Timestamp.fromDate(new Date()),
+            };
+            const accountRef = firebase_1.db.collection('account').doc(uid);
+            const doc = yield accountRef.get();
+            let accessToken = '';
+            let refreshToken = '';
+            if (!doc.exists) {
+                yield firebase_1.db.collection('account').doc(uid).set(data);
+                accessToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                    expiresIn: '2d',
+                });
+                refreshToken = jwt.sign({ email: email, role: data.type_account }, process.env.SECRET, {
+                    expiresIn: '7d',
+                });
+            }
+            else {
+                accessToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                    expiresIn: '2d',
+                });
+                refreshToken = jwt.sign({ email: email, role: doc.data().type_account }, process.env.SECRET, {
+                    expiresIn: '7d',
+                });
+            }
+            res.cookie('refreshToken', refreshToken, { httpOnly: true });
+            return { accessToken: accessToken, data: doc.data() };
+        });
+    }
     static getAllAccount(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const accountRef = firebase_1.db.collection('account');

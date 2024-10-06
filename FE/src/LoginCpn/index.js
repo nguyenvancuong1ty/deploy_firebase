@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingAntd from '~/Loading/Loading.antd';
-import LoginFacebook from '~/LoginFacebook';
 import LoginGithub from '~/LoginGithub';
 import LoginGoogle from '~/LoginGoogle';
 import Register from '~/component/Register';

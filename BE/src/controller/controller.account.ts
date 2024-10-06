@@ -16,6 +16,12 @@ class AccountController {
         const data = await AccountService.handleLoginWithGoogle(req, res);
         return new OK(data).send(res);
     }
+
+    async handleLoginWithGithub(req: Request, res: Response): Promise<any> {
+        const data = await AccountService.handleLoginWithGithub(req, res);
+        return new OK(data).send(res);
+    }
+
     async getAllAccount(req: Request, res: Response): Promise<void | Response> {
         const data = await AccountService.getAllAccount(req, res);
         if (data) {

@@ -9,14 +9,9 @@ export const notifyData = createSlice({
     initialState,
     reducers: {
         addNotifyData: (state, action) => {
-            const data = [...state.notifyData, ...action.payload];
-            const newData = data.sort((a, b) => {
-                return b.time - a.time;
-            });
-            return {
-                ...state,
-                notifyData: newData,
-            };
+            const existingIds = state.notifyData.map((item) => item.id);
+            const newData = action.payload.filter((item) => !existingIds.includes(item.id));
+            state.notifyData = [...state.notifyData, ...newData].sort((a, b) => b.time - a.time);
         },
         changeNotifyData: (state, action) => {
             return {

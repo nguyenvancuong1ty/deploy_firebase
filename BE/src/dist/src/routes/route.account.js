@@ -13,6 +13,7 @@ const accountController = new controller_account_1.default();
 // accountRouter.use(checkApiKey);
 accountRouter.post('/account/login', (0, response_error_1.handleError)(accountController.login));
 accountRouter.post('/account/login-google', (0, response_error_1.handleError)(accountController.handleLoginWithGoogle));
+accountRouter.post('/account/login-github', (0, response_error_1.handleError)(accountController.handleLoginWithGithub));
 accountRouter.post('/account/', (0, response_error_1.handleError)(accountController.create));
 accountRouter.post('/account/:id', (0, response_error_1.handleError)(accountController.changePassword));
 accountRouter.put('/account/:id', (0, authorization_1.authorization)(['admin']), (0, response_error_1.handleError)(accountController.update));

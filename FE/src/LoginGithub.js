@@ -1,31 +1,47 @@
-import { signInWithPopup } from 'firebase/auth';
-import { auth } from './firebase';
+import { signInWithPopup, GithubAuthProvider } from 'firebase/auth';
+import { auth, provider } from './firebase';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { GithubAuthProvider } from 'firebase/auth';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrent, setAuth } from './redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const provider = new GithubAuthProvider();
 const LoginGithub = ({ setShow, setUid }) => {
-    const handleLoginWithGithub = () => {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-                const credential = GithubAuthProvider.credentialFromResult(result);
-                const token = credential.accessToken;
-
-                // The signed-in user info.
-                const user = result.user;
-                // IdP data available using getAdditionalUserInfo(result)
-                // ...
-                console.log('OK');
-                console.log('Kết quả', user, token);
-            })
-            .catch((error) => {
-                // Handle Errors here.
-
-                console.log('Lỗi', error);
-                // ...
+    const dispatch = useDispatch();
+    const number = useSelector((state) => state.numberReducer.number);
+    const navigate = useNavigate();
+    const handleLoginWithGithub = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const credential = GithubAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            const user = result.user;
+            const ok = await axios({
+                method: 'post',
+                url: `${process.env.REACT_APP_API_URL}/account/login-github`,
+                data: {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                },
+                withCredentials: true,
             });
+            setUid(user.uid);
+            localStorage.setItem('token', ok.data.metadata.accessToken);
+            localStorage.setItem('address', ok.data.metadata.data.address);
+            localStorage.setItem('uid', user.uid);
+            localStorage.setItem('account', ok.data.metadata.data.type_account);
+            dispatch(setCurrent(number));
+            dispatch(setAuth({ ...ok.data.metadata.data }));
+            sessionStorage.setItem('reduxAuthState', JSON.stringify(ok.data.metadata.data));
+            setShow(false);
+            console.log(ok.data.metadata.data.type_account);
+            ok.data.metadata.data.type_account === 'admin' && navigate('/admin/');
+        } catch (error) {
+            toast.error({});
+        }
     };
 
     return (

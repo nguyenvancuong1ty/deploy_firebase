@@ -34,6 +34,12 @@ class AccountController {
             return new response_success_1.OK(data).send(res);
         });
     }
+    handleLoginWithGithub(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield service_account_1.default.handleLoginWithGithub(req, res);
+            return new response_success_1.OK(data).send(res);
+        });
+    }
     getAllAccount(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield service_account_1.default.getAllAccount(req, res);

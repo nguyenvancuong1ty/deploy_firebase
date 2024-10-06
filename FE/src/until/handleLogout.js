@@ -19,14 +19,14 @@ function HandleLogout(props) {
             content: 'Bạn có muốn đăng xuất không?',
             cancelText: 'Hủy',
             onOk() {
+                dispatch(resetNotifyData());
+                dispatch(setNotifyData([]));
                 localStorage.clear();
                 sessionStorage.clear();
                 dispatch(reset());
                 dispatch(resetNumberNotify());
                 dispatch(setAuth({}));
-                dispatch(resetNotifyData());
                 props.setUid && props.setUid(null);
-                dispatch(setNotifyData([]));
                 toast.success('Đăng xuất thành công', {
                     position: 'bottom-left',
                     autoClose: 2000,
